@@ -1,0 +1,23 @@
+C:\Users\User\YandexDisk\Studying\Master\ЛЭТИ\нир\App\PACS Analyzer\PACS Analyzer\bin\Debug\DatabaseMain.mdf
+C:\Users\User\YandexDisk\Studying\Master\ЛЭТИ\нир\App\PACS Analyzer\PACS Analyzer\bin\Debug\DatabaseMain_log.ldf
+C:\Users\User\YandexDisk\Studying\Master\ЛЭТИ\нир\App\PACS Analyzer\PACS Analyzer\bin\Debug\PACS Analyzer.exe.config
+C:\Users\User\YandexDisk\Studying\Master\ЛЭТИ\нир\App\PACS Analyzer\PACS Analyzer\bin\Debug\PACS Analyzer.exe
+C:\Users\User\YandexDisk\Studying\Master\ЛЭТИ\нир\App\PACS Analyzer\PACS Analyzer\bin\Debug\PACS Analyzer.pdb
+C:\Users\User\YandexDisk\Studying\Master\ЛЭТИ\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS_Analyzer.MainForm.resources
+C:\Users\User\YandexDisk\Studying\Master\ЛЭТИ\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS_Analyzer.Properties.Resources.resources
+C:\Users\User\YandexDisk\Studying\Master\ЛЭТИ\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS Analyzer.csproj.GenerateResource.Cache
+C:\Users\User\YandexDisk\Studying\Master\ЛЭТИ\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS Analyzer.exe
+C:\Users\User\YandexDisk\Studying\Master\ЛЭТИ\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS Analyzer.pdb
+C:\Users\User\YandexDisk\Studying\Master\ЛЭТИ\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS Analyzer.csprojResolveAssemblyReference.cache
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS_Analyzer.MainForm.resources
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS_Analyzer.Properties.Resources.resources
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS Analyzer.csproj.GenerateResource.Cache
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS Analyzer.csproj.CoreCompileInputs.cache
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS Analyzer.exe
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS Analyzer.pdb
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\bin\Debug\DatabaseMain.mdf
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\bin\Debug\DatabaseMain_log.ldf
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\bin\Debug\PACS Analyzer.exe.config
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\bin\Debug\PACS Analyzer.exe
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\bin\Debug\PACS Analyzer.pdb
+C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\obj\Debug\PACS Analyzer.csprojResolveAssemblyReference.cache
