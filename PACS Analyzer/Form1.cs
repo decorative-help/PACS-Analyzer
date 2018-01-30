@@ -79,7 +79,7 @@ namespace PACS_Analyzer
             FCSOBG.comboBoxTimes = new List<DateTime>();
             FCSOBG.userList = new Dictionary<User, int>();
 
-            for (int i = 1; i < FCSOBG.fileLinesNumber - 2; i = i + Convert.ToInt32(FCSOBG.fileLinesNumber / 20))
+            for (int i = 0; i < FCSOBG.fileLinesNumber - 2; i = i + Convert.ToInt32(FCSOBG.fileLinesNumber / 20))
             {
                 FCSOBG.comboBoxTimes.Add(result[i].timestamp);
                 backgroundWorkerFile.ReportProgress((i * 100) / FCSOBG.fileLinesNumber); // progressBar
@@ -198,6 +198,7 @@ namespace PACS_Analyzer
                         }
                         catch (Exception ex)
                         {
+                            //the end of list for this user
                         }
 
                     }
@@ -259,11 +260,13 @@ namespace PACS_Analyzer
                             daChild.Fill(dtChild);// Put all data to DataTable formay
                             foreach (DataRow lineChild in dtChild.Rows)// read [intervals]Child line by line
                             {// for each user who has been there
-                                using (SqlCommand selectGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE ([user_source_id] = @user_source_id AND [user_target_id] = @user_target_id) OR ([user_source_id] = @user_target_id AND [user_target_id] = @user_source_id) AND [date] = @date;", sqlConnection))// check if such line exists in [GraphByDate] table
+                                using (SqlCommand selectGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE ([user_source_id] = @user_source_id AND [user_target_id] = @user_target_id) OR ([user_source_id] = @user_target_id AND [user_target_id] = @user_source_id) AND [date] = @date AND [zone] = @zone AND [floor] = @floor;", sqlConnection))// check if such line exists in [GraphByDate] table
                                 {
-                                    selectGraphByDate.Parameters.AddWithValue("user_source_id", lineParent[3]);// user_id
+                                    selectGraphByDate.Parameters.AddWithValue("user_source_id", lineParent[3]);// ↑user_id
                                     selectGraphByDate.Parameters.AddWithValue("user_target_id", lineChild[3]);// user_id
                                     selectGraphByDate.Parameters.AddWithValue("date", Convert.ToDateTime(lineParent["start_time"]).Date);// date should be unique
+                                    selectGraphByDate.Parameters.AddWithValue("zone", lineParent["zone"]);// zone = ↑zone
+                                    selectGraphByDate.Parameters.AddWithValue("floor", lineParent["floor"]);// floor = ↑floor
                                     int lineExist = 0;
                                     try// if there are any rows
                                     {
@@ -276,11 +279,13 @@ namespace PACS_Analyzer
 
                                     if (lineExist > 0)// line already exists, then UPDATE
                                     {
-                                        using (SqlCommand updateGraphByDate = new SqlCommand("UPDATE [GraphByDate] SET [duration] = @duration, [times] = @times WHERE ([user_source_id] = @user_source_id AND [user_target_id] = @user_target_id) OR ([user_source_id] = @user_target_id AND [user_target_id] = @user_source_id) AND [date] = @date;", sqlConnection))// update
+                                        using (SqlCommand updateGraphByDate = new SqlCommand("UPDATE [GraphByDate] SET [duration] = @duration, [times] = @times WHERE ([user_source_id] = @user_source_id AND [user_target_id] = @user_target_id) OR ([user_source_id] = @user_target_id AND [user_target_id] = @user_source_id) AND [date] = @date AND [zone] = @zone AND [floor] = @floor;", sqlConnection))// update
                                         {
                                             updateGraphByDate.Parameters.AddWithValue("user_source_id", lineParent[3]);// user_id
                                             updateGraphByDate.Parameters.AddWithValue("user_target_id", lineChild[3]);// user_id
                                             updateGraphByDate.Parameters.AddWithValue("date", Convert.ToDateTime(lineParent["start_time"]).Date);// date should be unique
+                                            updateGraphByDate.Parameters.AddWithValue("zone", lineParent["zone"]);// zone = ↑zone
+                                            updateGraphByDate.Parameters.AddWithValue("floor", lineParent["floor"]);// floor = ↑floor
 
                                             interval = Convert.ToDateTime(lineChild["end_time"]) - Convert.ToDateTime(lineParent["start_time"]);
                                             intervalMinutes = interval.Minutes;// time difference (duration) in minutes
@@ -306,11 +311,13 @@ namespace PACS_Analyzer
                                     }// if
                                     else// there is no such lines, then INSERT
                                     {
-                                        using (SqlCommand insertGraphByDate = new SqlCommand("INSERT INTO [GraphByDate] (date, user_source_id, user_target_id, duration, times) VALUES (@date, @user_source_id, @user_target_id, @duration, @times);", sqlConnection))// get all lines from [intervals] where [start_time] is between ↑ start_time and ↑ end_time
+                                        using (SqlCommand insertGraphByDate = new SqlCommand("INSERT INTO [GraphByDate] (date, user_source_id, user_target_id, duration, times, zone, floor) VALUES (@date, @user_source_id, @user_target_id, @duration, @times, @zone, @floor);", sqlConnection))// get all lines from [intervals] where [start_time] is between ↑ start_time and ↑ end_time
                                         {
                                             insertGraphByDate.Parameters.AddWithValue("date", Convert.ToDateTime(lineParent["start_time"]).Date);
                                             insertGraphByDate.Parameters.AddWithValue("user_source_id", lineParent[3]);// user_id
                                             insertGraphByDate.Parameters.AddWithValue("user_target_id", lineChild[3]);// user_id
+                                            insertGraphByDate.Parameters.AddWithValue("zone", lineParent["zone"]);// zone = ↑zone
+                                            insertGraphByDate.Parameters.AddWithValue("floor", lineParent["floor"]);// floor = ↑floor
 
                                             interval = Convert.ToDateTime(lineChild["end_time"]) - Convert.ToDateTime(lineParent["start_time"]);
                                             intervalMinutes = interval.Minutes;// time difference (duration) in minutes
@@ -340,24 +347,15 @@ namespace PACS_Analyzer
             /*************************************************************************************
             ********          Anomalies search    - START                ********
             *************************************************************************************/
-            
+
             using (SqlConnection sqlConnection = new SqlConnection(FCSOBG.connectionString))
             {
                 sqlConnection.Open();// open connection
 
-                using (SqlCommand readGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate]", sqlConnection))// First, read whole table [GraphByDate]
+                using (SqlCommand readGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE [user_source_id] = @user_source_id;", sqlConnection))// First, read whole table [GraphByDate]
                 {
-                    SqlDataAdapter da = new SqlDataAdapter(readGraphByDate);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);// Put all data to DataTable formay
-                    iP = 1;// counter for Progress Change and ID
-                    Dictionary<DateTime, int> timesList = new Dictionary<DateTime, int>();
-
-                     var uniqueUsers = result.GroupBy(p => p.empid)// find unique Users
-                            .Select(g => g.First())
-                            .ToList();
                     //foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line
-                    //{
+                    //{                        
                         /*int sevenDays = 7;// look for the day from the next week
                         var nextWeek = from date in dt.AsEnumerable()
                                                where date.Field<int>("user_source_id") == line.Field<int>("user_source_id") && date.Field<int>("user_target_id") == line.Field<int>("user_target_id") && date.Field<DateTime>("date") == Convert.ToDateTime(line.Field<DateTime>("date")).Date.AddDays(sevenDays)
@@ -367,27 +365,27 @@ namespace PACS_Analyzer
                             timesList.Add(nextWeek.)
                         }
                          */
-                    /*Dictionary<string, List<int>> arrayByDuration = new Dictionary<string,List<int>>();// dictionary for array of all pairs
-                    foreach(User user in FCSOBG.userList.Keys){
+                        /*Dictionary<string, List<int>> arrayByDuration = new Dictionary<string,List<int>>();// dictionary for array of all pairs
+                        foreach(User user in FCSOBG.userList.Keys){
 
-                    while(true){
-                        var listOfUsers = from date in dt.AsEnumerable()
-                                          where date.Field<int>("user_source_id") == user.id || date.Field<int>("user_target_id") == user.id
-                                          select date;
-                        foreach()
-                    }
-                    }*/
+                        while(true){
+                            var listOfUsers = from date in dt.AsEnumerable()
+                                              where date.Field<int>("user_source_id") == user.id || date.Field<int>("user_target_id") == user.id
+                                              select date;
+                            foreach()
+                        }
+                        }*/
 
 
-                        
 
-                    
 
+
+                    //}//foreach
                 }// SELECT * FROM [GraphByDate]
 
                 sqlConnection.Close();// close connection
             }// end of connection
-            
+
             /*************************************************************************************
             ********          Anomalies search    - FINISH                ********
             *************************************************************************************/
@@ -443,10 +441,74 @@ namespace PACS_Analyzer
             buttonFind.UseVisualStyleBackColor = true;
             buttonFind.BackColor = Color.White;
         }
-        
+
         private void linkLabelGenerateGraphs_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            using (SqlConnection sqlConnection = new SqlConnection(FCSO.connectionString))
+            {
+                sqlConnection.Open();// open connection
 
+                using (SqlCommand readGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE [user_source_id] = @user_source_id OR [user_target_id] = @user_source_id;", sqlConnection))// First, read whole table [GraphByDate]
+                {
+                    readGraphByDate.Parameters.AddWithValue("user_source_id", 48);// 
+
+                    SqlDataAdapter da = new SqlDataAdapter(readGraphByDate);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);// Put all data to DataTable formay
+
+                    string path = "number8.txt";
+                    try
+                    {
+
+                        // Delete the file if it exists.
+                        if (File.Exists(path))
+                        {
+                            // Note that no lock is put on the
+                            // file and the possibility exists
+                            // that another process could do
+                            // something with it between
+                            // the calls to Exists and Delete.
+                            File.Delete(path);
+                        }
+
+                        // Create the file.
+                        using (FileStream fs = File.Create(path))
+                        {
+
+                            Byte[] info = new UTF8Encoding(true).GetBytes("date (whole day); user1; user2; average duration (sec); times; floor-zone\n");
+                            // Add some information to the file.
+                            fs.Write(info, 0, info.Length);
+
+                            int average_duration = 0;
+                            foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line
+                            {
+                                average_duration = (Convert.ToInt32(line["duration"]) * 60)/ Convert.ToInt32(line["times"]);
+                                info = new UTF8Encoding(true).GetBytes(line["date"] + ";" + line["user_source_id"] + ";" + line["user_target_id"] + ";" + average_duration.ToString() + ";" + line["times"] + ";" + line["floor"] +"-"+ line["zone"] + "\n");
+                                // Add some information to the file.
+                                fs.Write(info, 0, info.Length);
+
+                            }//foreach
+                        }
+
+                        // Open the stream and read it back.
+                        using (StreamReader sr = File.OpenText(path))
+                        {
+                            string s = "";
+                            while ((s = sr.ReadLine()) != null)
+                            {
+                                Console.WriteLine(s);
+                            }
+                        }
+                    }
+
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                }// SELECT * FROM [GraphByDate]
+
+                sqlConnection.Close();// close connection
+            }// end of connection
         }
 
         private void bindingSource1_CurrentChanged(object sender, EventArgs e)
