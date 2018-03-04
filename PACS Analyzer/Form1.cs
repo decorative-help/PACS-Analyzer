@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;// for File
@@ -66,26 +67,24 @@ namespace PACS_Analyzer
         /*
          * Work with file
          */
-        private void backgroundWorkerFile_DoWork(object sender, DoWorkEventArgs e)
+
+        private void updateUserList()
         {
-            /*************************************************************************************
-             ********          parse file and fill FormCoreShare object - START           ********
-             *************************************************************************************/
-
-            FormCoreShare FCSOBG = e.Argument as FormCoreShare;// it goes from backgroundWorkerFile.RunWorkerAsync(FCSO); object is sent from MainForm
+            FormCoreShare FCSObj = FCSO;
             var engine = new FileHelperEngine<CSVReader>();
-            var result = engine.ReadFile(FCSOBG.filePath);// read the file
-            FCSOBG.fileLinesNumber = result.Length;
-            FCSOBG.comboBoxTimes = new List<DateTime>();
-            FCSOBG.userList = new Dictionary<User, int>();
-
-            for (int i = 0; i < FCSOBG.fileLinesNumber - 2; i = i + Convert.ToInt32(FCSOBG.fileLinesNumber / 20))
+            CSVReader[] result = new CSVReader[0];
+            try
             {
-                FCSOBG.comboBoxTimes.Add(result[i].timestamp);
-                backgroundWorkerFile.ReportProgress((i * 100) / FCSOBG.fileLinesNumber); // progressBar
-
+                result = engine.ReadFile(FCSObj.filePath);// read the file
             }
-            FCSOBG.comboBoxTimes.Add(result[FCSOBG.fileLinesNumber - 2].timestamp);// add dates to MainForm
+            catch (Exception e)
+            {
+                MessageBox.Show("Cannot find the file:\n" + FCSObj.filePath + "\n\n" + e.Message);
+                return;
+            }
+
+            FCSObj.fileLinesNumber = result.Length;
+            FCSObj.userList = new Dictionary<User, int>();
 
             var uniqueUsers = result.GroupBy(p => p.empid)// find unique Users
                             .Select(g => g.First())
@@ -95,11 +94,48 @@ namespace PACS_Analyzer
             foreach (var line in uniqueUsers)
             {// make a new User obj and add to FormCoreShare obj
                 User temp = new User(iForUser, line.empid, line.a, line.firstname, line.lastname, line.department);
-                FCSOBG.userList.Add(temp, iForUser);
+                FCSObj.userList.Add(temp, iForUser);
                 iForUser++;
             }
 
-            e.Result = FCSOBG;// send info to backgroundWorkerFile_RunWorkerCompleted
+            FCSO.userList = FCSObj.userList;// associate userList to global one
+        }// updateUserList
+
+        private void backgroundWorkerFile_DoWork(object sender, DoWorkEventArgs e)
+        {
+            /*************************************************************************************
+             ********          parse file and fill FormCoreShare object - START           ********
+             *************************************************************************************/
+
+            FormCoreShare FCSObj = e.Argument as FormCoreShare;// it goes from backgroundWorkerFile.RunWorkerAsync(FCSO); object is sent from MainForm
+            var engine = new FileHelperEngine<CSVReader>();
+            var result = engine.ReadFile(FCSObj.filePath);// read the file
+            FCSObj.fileLinesNumber = result.Length;
+            FCSObj.comboBoxTimes = new List<DateTime>();
+            FCSObj.userList = new Dictionary<User, int>();
+
+            for (int i = 0; i < FCSObj.fileLinesNumber - 2; i = i + Convert.ToInt32(FCSObj.fileLinesNumber / 20))
+            {
+                FCSObj.comboBoxTimes.Add(result[i].timestamp);
+                backgroundWorkerFile.ReportProgress((i * 100) / FCSObj.fileLinesNumber); // progressBar
+
+            }
+            FCSObj.comboBoxTimes.Add(result[FCSObj.fileLinesNumber - 2].timestamp);// add dates to MainForm
+
+            var uniqueUsers = result.GroupBy(p => p.empid)// find unique Users
+                            .Select(g => g.First())
+                            .ToList();
+
+            int iForUser = 1;
+            foreach (var line in uniqueUsers)
+            {// make a new User obj and add to FormCoreShare obj
+                User temp = new User(iForUser, line.empid, line.a, line.firstname, line.lastname, line.department);
+                FCSObj.userList.Add(temp, iForUser);
+                iForUser++;
+            }
+
+            e.Result = FCSObj;// send info to backgroundWorkerFile_RunWorkerCompleted
+            FCSO.userList = FCSObj.userList;// associate userList to global one
 
             /*************************************************************************************
              ********          parse file and fill FormCoreShare object - FINISH          ********
@@ -356,25 +392,25 @@ namespace PACS_Analyzer
                 {
                     //foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line
                     //{                        
-                        /*int sevenDays = 7;// look for the day from the next week
-                        var nextWeek = from date in dt.AsEnumerable()
-                                               where date.Field<int>("user_source_id") == line.Field<int>("user_source_id") && date.Field<int>("user_target_id") == line.Field<int>("user_target_id") && date.Field<DateTime>("date") == Convert.ToDateTime(line.Field<DateTime>("date")).Date.AddDays(sevenDays)
-                                               select date;
-                        for (; nextWeek != null; sevenDays++)
-                        {
-                            timesList.Add(nextWeek.)
-                        }
-                         */
-                        /*Dictionary<string, List<int>> arrayByDuration = new Dictionary<string,List<int>>();// dictionary for array of all pairs
-                        foreach(User user in FCSOBG.userList.Keys){
+                    /*int sevenDays = 7;// look for the day from the next week
+                    var nextWeek = from date in dt.AsEnumerable()
+                                           where date.Field<int>("user_source_id") == line.Field<int>("user_source_id") && date.Field<int>("user_target_id") == line.Field<int>("user_target_id") && date.Field<DateTime>("date") == Convert.ToDateTime(line.Field<DateTime>("date")).Date.AddDays(sevenDays)
+                                           select date;
+                    for (; nextWeek != null; sevenDays++)
+                    {
+                        timesList.Add(nextWeek.)
+                    }
+                     */
+                    /*Dictionary<string, List<int>> arrayByDuration = new Dictionary<string,List<int>>();// dictionary for array of all pairs
+                    foreach(User user in FCSOBG.userList.Keys){
 
-                        while(true){
-                            var listOfUsers = from date in dt.AsEnumerable()
-                                              where date.Field<int>("user_source_id") == user.id || date.Field<int>("user_target_id") == user.id
-                                              select date;
-                            foreach()
-                        }
-                        }*/
+                    while(true){
+                        var listOfUsers = from date in dt.AsEnumerable()
+                                          where date.Field<int>("user_source_id") == user.id || date.Field<int>("user_target_id") == user.id
+                                          select date;
+                        foreach()
+                    }
+                    }*/
 
 
 
@@ -444,72 +480,72 @@ namespace PACS_Analyzer
 
         private void linkLabelGenerateGraphs_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(FCSO.connectionString))
+            updateUserList();
+            if (FCSO.userList == null)
             {
-                sqlConnection.Open();// open connection
+                MessageBox.Show("Cannot identify users \nFCSO.userList == null");
+                return;
+            }
+            foreach (KeyValuePair<User, int> userPair in FCSO.userList)// add all users to ThreadPool to save files
+            {
+                ThreadPool.QueueUserWorkItem(new WaitCallback(saveToFileByUser), userPair.Key);
+                richTextBoxDebug.AppendText(userPair.Key.empID+" - started\n");
+            }// foreach
+            richTextBoxDebug.AppendText("Done");
+        }// linkLabelGenerateGraphs_LinkClicked
 
-                using (SqlCommand readGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE [user_source_id] = @user_source_id OR [user_target_id] = @user_source_id;", sqlConnection))// First, read whole table [GraphByDate]
+        private void saveToFileByUser(object userObj)
+        {
+            if (userObj != null)
+            {
+                User user = (User)userObj;// associate user
+
+                using (SqlConnection sqlConnection = new SqlConnection(FCSO.connectionString))
                 {
-                    readGraphByDate.Parameters.AddWithValue("user_source_id", 48);// 
+                    sqlConnection.Open();// open connection
 
-                    SqlDataAdapter da = new SqlDataAdapter(readGraphByDate);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);// Put all data to DataTable formay
-
-                    string path = "number8.txt";
-                    try
+                    using (SqlCommand readGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE [user_source_id] = @user_source_id OR [user_target_id] = @user_source_id;", sqlConnection))// First, read whole table [GraphByDate]
                     {
+                        readGraphByDate.Parameters.AddWithValue("user_source_id", user.id);// 
 
-                        // Delete the file if it exists.
-                        if (File.Exists(path))
+                        SqlDataAdapter da = new SqlDataAdapter(readGraphByDate);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);// Put all data to DataTable formay
+
+                        string path = "users/"+user.id + "_user_" + user.lastName + "_" + user.firstName + ".txt";
+                        try
                         {
-                            // Note that no lock is put on the
-                            // file and the possibility exists
-                            // that another process could do
-                            // something with it between
-                            // the calls to Exists and Delete.
-                            File.Delete(path);
-                        }
-
-                        // Create the file.
-                        using (FileStream fs = File.Create(path))
-                        {
-
-                            Byte[] info = new UTF8Encoding(true).GetBytes("date (whole day); user1; user2; average duration (sec); times; floor-zone\n");
-                            // Add some information to the file.
-                            fs.Write(info, 0, info.Length);
-
-                            int average_duration = 0;
-                            foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line
+                            if (File.Exists(path))
+                                File.Delete(path);
+                            // Create the file.
+                            using (FileStream fs = File.Create(path))
                             {
-                                average_duration = (Convert.ToInt32(line["duration"]) * 60)/ Convert.ToInt32(line["times"]);
-                                info = new UTF8Encoding(true).GetBytes(line["date"] + ";" + line["user_source_id"] + ";" + line["user_target_id"] + ";" + average_duration.ToString() + ";" + line["times"] + ";" + line["floor"] +"-"+ line["zone"] + "\n");
+                                Byte[] info = new UTF8Encoding(true).GetBytes("date (whole day); user1; user2; average duration (sec); times; floor-zone\n");
                                 // Add some information to the file.
                                 fs.Write(info, 0, info.Length);
 
-                            }//foreach
-                        }
+                                int average_duration = 0;
+                                foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line
+                                {
+                                    average_duration = (Convert.ToInt32(line["duration"]) * 60) / Convert.ToInt32(line["times"]);
+                                    info = new UTF8Encoding(true).GetBytes(line["date"] + ";" + line["user_source_id"] + ";" + line["user_target_id"] + ";" + average_duration.ToString() + ";" + line["times"] + ";" + line["floor"] + "-" + line["zone"] + "\n");
+                                    // Add some information to the file.
+                                    fs.Write(info, 0, info.Length);
 
-                        // Open the stream and read it back.
-                        using (StreamReader sr = File.OpenText(path))
+                                }//foreach
+                            }// using
+                        }// try
+
+                        catch (Exception ex)
                         {
-                            string s = "";
-                            while ((s = sr.ReadLine()) != null)
-                            {
-                                Console.WriteLine(s);
-                            }
+                            Console.WriteLine(ex.Message);
                         }
-                    }
+                    }// SELECT * FROM [GraphByDate]
 
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.ToString());
-                    }
-                }// SELECT * FROM [GraphByDate]
-
-                sqlConnection.Close();// close connection
-            }// end of connection
-        }
+                    sqlConnection.Close();// close connection
+                }// end of connection
+            }// if
+        }// getUserList
 
         private void bindingSource1_CurrentChanged(object sender, EventArgs e)
         {

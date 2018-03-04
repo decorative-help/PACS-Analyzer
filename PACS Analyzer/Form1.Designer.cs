@@ -48,6 +48,7 @@
             this.backgroundWorkerFile = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorkerTable = new System.ComponentModel.BackgroundWorker();
             this.databaseMainDataSet1 = new PACS_Analyzer.DatabaseMainDataSet();
+            this.richTextBoxDebug = new System.Windows.Forms.RichTextBox();
             this.groupBoxSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.databaseMainDataSet1)).BeginInit();
             this.SuspendLayout();
@@ -114,12 +115,12 @@
             this.linkLabelGenerateGraphs.AutoSize = true;
             this.linkLabelGenerateGraphs.Font = new System.Drawing.Font("Lucida Sans", 12F, System.Drawing.FontStyle.Italic);
             this.linkLabelGenerateGraphs.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(187)))));
-            this.linkLabelGenerateGraphs.Location = new System.Drawing.Point(126, 269);
+            this.linkLabelGenerateGraphs.Location = new System.Drawing.Point(163, 269);
             this.linkLabelGenerateGraphs.Name = "linkLabelGenerateGraphs";
-            this.linkLabelGenerateGraphs.Size = new System.Drawing.Size(133, 18);
+            this.linkLabelGenerateGraphs.Size = new System.Drawing.Size(135, 18);
             this.linkLabelGenerateGraphs.TabIndex = 14;
             this.linkLabelGenerateGraphs.TabStop = true;
-            this.linkLabelGenerateGraphs.Text = "Generate Graphs";
+            this.linkLabelGenerateGraphs.Text = "Generate Vectors";
             this.linkLabelGenerateGraphs.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelGenerateGraphs_LinkClicked);
             // 
             // label2
@@ -265,12 +266,21 @@
             this.databaseMainDataSet1.DataSetName = "DatabaseMainDataSet";
             this.databaseMainDataSet1.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
+            // richTextBoxDebug
+            // 
+            this.richTextBoxDebug.Location = new System.Drawing.Point(458, 13);
+            this.richTextBoxDebug.Name = "richTextBoxDebug";
+            this.richTextBoxDebug.Size = new System.Drawing.Size(258, 311);
+            this.richTextBoxDebug.TabIndex = 8;
+            this.richTextBoxDebug.Text = "";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(236)))), ((int)(((byte)(236)))));
-            this.ClientSize = new System.Drawing.Size(464, 379);
+            this.ClientSize = new System.Drawing.Size(768, 379);
+            this.Controls.Add(this.richTextBoxDebug);
             this.Controls.Add(this.labelAnalyzer);
             this.Controls.Add(this.labelPACS);
             this.Controls.Add(this.groupBoxSettings);
@@ -311,6 +321,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private DatabaseMainDataSet databaseMainDataSet1;
+        private System.Windows.Forms.RichTextBox richTextBoxDebug;
     }
 }
 
