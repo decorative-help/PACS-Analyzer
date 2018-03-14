@@ -31,34 +31,25 @@ namespace PACS_Analyzer
 
             FCSO.filePath = "default.csv";
             FCSO.connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Navalny\Documents\нир\App\PACS Analyzer\PACS Analyzer\DatabaseMain.mdf;Integrated Security=True;MultipleActiveResultSets=True";
-            // replace "Choose" with the default path
-            linkLabelChoose.Text = FCSO.filePath;
 
             backgroundWorkerFile.WorkerReportsProgress = true;
             backgroundWorkerTable.WorkerReportsProgress = true;
-
+            progressBarSteps.Minimum = 0;
+            progressBarSteps.Maximum = 3;// Number of steps on the form
+            progressBarSteps.Value = 0;// Set the initial value of the ProgressBar
+            progressBarSteps.Step = 1;// Set the Step value
         }
-
-        /*
-         * Open file dialog and choose a File
-         */
-        private void linkLabelChoose_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            /*openFileDialogChooseFile.Filter = "CSV files|*.csv";
-            openFileDialogChooseFile.Title = "Select a Log file";*/
-            DialogResult result = openFileDialogChooseFile.ShowDialog(); // Show the dialog.
-        }
-
+        
         private void openFileDialogChooseFile_FileOk(object sender, CancelEventArgs e)
         {
             try
             {   //Success way: fill in FCSO (file name, path, size and lines)
                 FCSO.filePath = openFileDialogChooseFile.FileName;
                 FCSO.fileName = openFileDialogChooseFile.SafeFileName;
-                linkLabelChoose.Text = FCSO.fileName;// replace "Choose" with the default path
 
-                progressBarMain.Visible = true;
+                progressBarSteps.Visible = true;
                 backgroundWorkerFile.RunWorkerAsync(FCSO);// Start a backgroundWorkerFile and send an object
+                progressBarSteps.PerformStep();
             }
             catch (Exception ex)
             {
@@ -140,7 +131,7 @@ namespace PACS_Analyzer
 
         private void backgroundWorkerFile_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progressBarMain.Value = e.ProgressPercentage;// Change the value of the ProgressBar to the BackgroundWorker progress
+            progressBar1.Value = e.ProgressPercentage;// Change the value of the ProgressBar to the BackgroundWorker progress
         }
 
         private void backgroundWorkerFile_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -160,8 +151,8 @@ namespace PACS_Analyzer
             comboBoxTill.Enabled = true;
             buttonFind.Enabled = true;
 
-            progressBarMain.Visible = false;
-            progressBarMain.Value = 0;
+            progressBar1.Visible = false;
+            progressBar1.Value = 0;
         }
 
         private void fillInIntervals(object x)
@@ -170,6 +161,9 @@ namespace PACS_Analyzer
             object[] array = x as object[];
             CSVReader line = array[0] as CSVReader;
             IOrderedEnumerable<CSVReader> timeGapList = array[1] as IOrderedEnumerable<CSVReader>;
+            int iP = (int)array[2];
+            int dtRowsCount = (int)array[3];
+            backgroundWorkerTable.ReportProgress((iP * 100) / dtRowsCount);
 
             TimeSpan interval = new TimeSpan();
             int intervalMinutes = -1;
@@ -230,6 +224,9 @@ namespace PACS_Analyzer
             // parse object x
             object[] array = x as object[];
             DataRow lineParent = array[0] as DataRow;
+            int iP = (int)array[1];
+            int dtRowsCount = (int)array[2];
+            backgroundWorkerTable.ReportProgress((iP * 100) / dtRowsCount);
 
             TimeSpan interval = new TimeSpan();
             int intervalMinutes = -1;
@@ -388,17 +385,9 @@ namespace PACS_Analyzer
             _numerOfThreadsNotYetCompleted = timeGapList.Count() - 1;
             foreach (var line in timeGapList)
             {
-                try
-                {
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(fillInIntervals), new object[] { line, timeGapList });
-                    backgroundWorkerTable.ReportProgress((iP * 100) / timeGapList.Count());
-                    //Console.Out.WriteLineAsync("And left: " + Convert.ToString(timeGapList.Count() - iP));
-                    iP++;
-                }
-                catch (Exception ez)
-                {
-                    Console.Out.WriteLineAsync(ez.ToString());
-                }
+                ThreadPool.QueueUserWorkItem(new WaitCallback(fillInIntervals), new object[] { line, timeGapList, iP, timeGapList.Count() });
+                //Console.Out.WriteLineAsync("And left: " + Convert.ToString(timeGapList.Count() - iP));
+                iP++;
             }// end of foreach
             _waitThreads.WaitOne();// Wait until the task is complete
 
@@ -440,8 +429,7 @@ namespace PACS_Analyzer
                     iP = 1;// counter for Progress Change and ID
                     foreach (DataRow lineParent in dt.Rows)// read [intervals] line by line
                     {
-                        ThreadPool.QueueUserWorkItem(new WaitCallback(fillInGraph), new object[] { lineParent });
-                        backgroundWorkerTable.ReportProgress((iP * 100) / dt.Rows.Count);
+                        ThreadPool.QueueUserWorkItem(new WaitCallback(fillInGraph), new object[] { lineParent, iP, dt.Rows.Count });
                         iP++;
                     }// foreach
                     _waitThreads.WaitOne();// Wait until the task is complete
@@ -519,26 +507,24 @@ namespace PACS_Analyzer
             FCSO.timeTill = Convert.ToDateTime(comboBoxTill.SelectedItem.ToString());
 
             buttonFind.Enabled = false;// prevent double launch of backgroundWorkerTable
-            progressBarMain.Visible = true;
-            labelProgress.Visible = true;
+            progressBar1.Visible = true;
             backgroundWorkerTable.RunWorkerAsync(FCSO);
             Console.Out.WriteLineAsync("backgroundWorkerTable - started");
+            progressBarSteps.PerformStep();
         }// end of buttonFind_Click
 
         private void backgroundWorkerTable_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             buttonFind.Enabled = true;// prevent double launch of backgroundWorkerTable
-            progressBarMain.Visible = false;
-            progressBarMain.Value = 0;
-            labelProgress.Visible = false;
+            progressBar1.Visible = false;
+            progressBar1.Value = 0;
             labelWorkinProgress.Visible = false;// Work in progress...
             Console.Out.WriteLineAsync("backgroundWorkerTable - finished");
         }// end of backgroundWorkerTable_RunWorkerCompleted
 
         private void backgroundWorkerTable_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progressBarMain.Value = e.ProgressPercentage;// Change the value of the ProgressBar to the BackgroundWorker progress
-            labelProgress.Text = e.ProgressPercentage.ToString() + "%";
+            progressBar1.Value = e.ProgressPercentage;// Change the value of the ProgressBar to the BackgroundWorker progress
         }// end of backgroundWorkerTable_ProgressChanged
 
         private void label2_Click(object sender, EventArgs e)
@@ -548,14 +534,10 @@ namespace PACS_Analyzer
 
         private void buttonFind_MouseEnter(object sender, EventArgs e)
         {
-            buttonFind.UseVisualStyleBackColor = false;
-            buttonFind.BackColor = Color.FromArgb(51, 149, 253);
         }
 
         private void buttonFind_MouseLeave(object sender, EventArgs e)
         {
-            buttonFind.UseVisualStyleBackColor = true;
-            buttonFind.BackColor = Color.White;
         }
 
         private void linkLabelGenerateGraphs_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -626,6 +608,78 @@ namespace PACS_Analyzer
         }// getUserList
 
         private void bindingSource1_CurrentChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonBrowse_Click(object sender, EventArgs e)
+        {
+            /*openFileDialogChooseFile.Filter = "CSV files|*.csv";
+            openFileDialogChooseFile.Title = "Select a Log file";*/
+            DialogResult result = openFileDialogChooseFile.ShowDialog(); // Show the dialog.
+        }
+
+        private void groupBoxSettings_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBoxTill_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            progressBarSteps.PerformStep();/// Perform the increment on the ProgressBar
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelHorizontalBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void progressBarSteps_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelTo_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelFrom_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBoxFrom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void progressBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelWorkinProgress_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void progressBar2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void progressBar3_Click(object sender, EventArgs e)
         {
 
         }
