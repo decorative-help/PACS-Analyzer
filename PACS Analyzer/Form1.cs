@@ -22,6 +22,8 @@ namespace PACS_Analyzer
          * @FCSO - class for storing information between Core and Form
          */
         FormCoreShare FCSO = new FormCoreShare();
+        private static ManualResetEvent _waitThreads;
+        private static int _numerOfThreadsNotYetCompleted;
 
         public MainForm()
         {
@@ -61,6 +63,7 @@ namespace PACS_Analyzer
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Console.Out.WriteAsync("\n\n+------------------+\n\nError\nException: " + ex.Message);
             }
         }
 
@@ -68,7 +71,7 @@ namespace PACS_Analyzer
          * Work with file
          */
 
-        private void updateUserList()
+        private void updateUserList(Object x = null)
         {
             FormCoreShare FCSObj = FCSO;
             var engine = new FileHelperEngine<CSVReader>();
@@ -80,6 +83,7 @@ namespace PACS_Analyzer
             catch (Exception e)
             {
                 MessageBox.Show("Cannot find the file:\n" + FCSObj.filePath + "\n\n" + e.Message);
+                Console.Out.WriteAsync("\n\n+------------------+\n\nCannot find the file\nException: " + e.Message);
                 return;
             }
 
@@ -101,18 +105,13 @@ namespace PACS_Analyzer
             FCSO.userList = FCSObj.userList;// associate userList to global one
         }// updateUserList
 
-        private void backgroundWorkerFile_DoWork(object sender, DoWorkEventArgs e)
+        private FormCoreShare updateDateGap()
         {
-            /*************************************************************************************
-             ********          parse file and fill FormCoreShare object - START           ********
-             *************************************************************************************/
-
-            FormCoreShare FCSObj = e.Argument as FormCoreShare;// it goes from backgroundWorkerFile.RunWorkerAsync(FCSO); object is sent from MainForm
+            FormCoreShare FCSObj = FCSO;
             var engine = new FileHelperEngine<CSVReader>();
             var result = engine.ReadFile(FCSObj.filePath);// read the file
             FCSObj.fileLinesNumber = result.Length;
             FCSObj.comboBoxTimes = new List<DateTime>();
-            FCSObj.userList = new Dictionary<User, int>();
 
             for (int i = 0; i < FCSObj.fileLinesNumber - 2; i = i + Convert.ToInt32(FCSObj.fileLinesNumber / 20))
             {
@@ -122,23 +121,20 @@ namespace PACS_Analyzer
             }
             FCSObj.comboBoxTimes.Add(result[FCSObj.fileLinesNumber - 2].timestamp);// add dates to MainForm
 
-            var uniqueUsers = result.GroupBy(p => p.empid)// find unique Users
-                            .Select(g => g.First())
-                            .ToList();
+            return FCSObj;// send info to backgroundWorkerFile_RunWorkerCompleted
+        }
 
-            int iForUser = 1;
-            foreach (var line in uniqueUsers)
-            {// make a new User obj and add to FormCoreShare obj
-                User temp = new User(iForUser, line.empid, line.a, line.firstname, line.lastname, line.department);
-                FCSObj.userList.Add(temp, iForUser);
-                iForUser++;
-            }
+        private void backgroundWorkerFile_DoWork(object sender, DoWorkEventArgs e)
+        {
+            /*************************************************************************************
+             ********          openFileDialogChooseFile - START           ********
+             *************************************************************************************/
 
-            e.Result = FCSObj;// send info to backgroundWorkerFile_RunWorkerCompleted
-            FCSO.userList = FCSObj.userList;// associate userList to global one
+            ThreadPool.QueueUserWorkItem(new WaitCallback(updateUserList));// start gathering user information in a Thread
+            e.Result = updateDateGap();// update comboBoxTimes
 
             /*************************************************************************************
-             ********          parse file and fill FormCoreShare object - FINISH          ********
+             ********          openFileDialogChooseFile - FINISH          ********
              *************************************************************************************/
         }
 
@@ -168,6 +164,189 @@ namespace PACS_Analyzer
             progressBarMain.Value = 0;
         }
 
+        private void fillInIntervals(object x)
+        {
+            // parse object x
+            object[] array = x as object[];
+            CSVReader line = array[0] as CSVReader;
+            IOrderedEnumerable<CSVReader> timeGapList = array[1] as IOrderedEnumerable<CSVReader>;
+
+            TimeSpan interval = new TimeSpan();
+            int intervalMinutes = -1;
+            int timeGapListCount = timeGapList.Count();// length of timeGapList
+
+            using (SqlConnection sqlConnection = new SqlConnection(FCSO.connectionString))
+            {
+                sqlConnection.Open();// open connection
+
+                var nextTimeLine = (from nextTime in timeGapList
+                                    where nextTime.empid == line.empid && nextTime.timestamp > line.timestamp
+                                    orderby nextTime.timestamp
+                                    select nextTime).FirstOrDefault();// next timeStamp for this user. FINISH time
+                if (nextTimeLine == null)// check if there is next time
+                {
+                    //Console.Out.WriteAsync("\n\n+------------------+\n\nNo next time\nException: ");
+                    if (Interlocked.Decrement(ref _numerOfThreadsNotYetCompleted) == 0)
+                        _waitThreads.Set();// Signal that work is finished
+                    return;
+                }
+                try
+                {
+                    interval = nextTimeLine.timestamp - line.timestamp;
+                    intervalMinutes = interval.Minutes;// time difference (duration) in minutes
+
+                    // INSERT INTO [intervals]
+                    SqlCommand insertIntervals = new SqlCommand("INSERT INTO [intervals] (start_time, end_time, user_id, floor, zone, duration) VALUES (@start_time, @end_time, @user_id, @floor, @zone, @duration)", sqlConnection);
+                    try
+                    {
+                        insertIntervals.Parameters.AddWithValue("start_time", line.timestamp);
+                        insertIntervals.Parameters.AddWithValue("end_time", nextTimeLine.timestamp);
+                        insertIntervals.Parameters.AddWithValue("user_id", FCSO.userList.First(g => g.Key.empID == line.empid).Key.id);// find UserId from FormCoreShare obj
+                        insertIntervals.Parameters.AddWithValue("duration", intervalMinutes);
+                        insertIntervals.Parameters.AddWithValue("floor", line.floor);
+                        insertIntervals.Parameters.AddWithValue("zone", line.zone);
+                        insertIntervals.ExecuteNonQuery();
+                    }
+                    catch (Exception e)
+                    {
+                        //the end of list for this user
+                        Console.Out.WriteAsync("\n\n+------------------+\n\nthe end of list for this user\nException: " + e.Message);
+                    }// catch
+                }// try
+                catch (Exception e)// there is no FINISH time
+                {
+                    Console.Out.WriteAsync("\n\n+------------------+\n\nNo finish time\nException: " + e.Message);
+                }// end of try/catch
+                sqlConnection.Close();// close connection
+            }// end of connection
+
+            //Console.Out.WriteLineAsync("Thread left: " + _numerOfThreadsNotYetCompleted.ToString());
+            if (Interlocked.Decrement(ref _numerOfThreadsNotYetCompleted) == 0)
+                _waitThreads.Set();// Signal that work is finished
+        }// fillInIntervals
+
+        private void fillInGraph(object x)
+        {
+            // parse object x
+            object[] array = x as object[];
+            DataRow lineParent = array[0] as DataRow;
+
+            TimeSpan interval = new TimeSpan();
+            int intervalMinutes = -1;
+
+            using (SqlConnection sqlConnection = new SqlConnection(FCSO.connectionString))
+            {
+                sqlConnection.Open();// open connection
+
+                using (SqlCommand readIntervalsChild = new SqlCommand("SELECT * FROM [intervals] WHERE [start_time] >= @our_start_time AND [start_time] <= @our_end_time AND [floor] = @floor AND [zone] = @zone ORDER BY [start_time]", sqlConnection))// get all lines from [intervals] where [start_time] is between ↑start_time and ↑end_time AND floor = ↑floor, zone = ↑zone
+                {// get all users who also have been there
+                    readIntervalsChild.Parameters.AddWithValue("our_start_time", lineParent["start_time"]);
+                    readIntervalsChild.Parameters.AddWithValue("our_end_time", lineParent["end_time"]);
+                    readIntervalsChild.Parameters.AddWithValue("floor", lineParent["floor"]);
+                    readIntervalsChild.Parameters.AddWithValue("zone", lineParent["zone"]);
+                    SqlDataAdapter daChild = new SqlDataAdapter(readIntervalsChild);
+                    DataTable dtChild = new DataTable();
+                    daChild.Fill(dtChild);// Put all data to DataTable format
+
+
+
+                    if (dtChild.Rows.Count == 0)
+                        Console.Out.WriteAsync("\n\n+------------------+\nCannot SELECT * FROM [intervals]\nour_start_time: " + lineParent["start_time"] + "\nour_end_time: " + lineParent["end_time"] + "\nfloor: " + lineParent["floor"] + "\nzone: " + lineParent["zone"] + "");
+
+
+                    foreach (DataRow lineChild in dtChild.Rows)// read [intervals]Child line by line
+                    {// for each user who has been there
+                        using (SqlCommand selectGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE ([user_source_id] = @user_source_id AND [user_target_id] = @user_target_id) OR ([user_source_id] = @user_target_id AND [user_target_id] = @user_source_id) AND [date] = @date AND [zone] = @zone AND [floor] = @floor ORDER BY [date];", sqlConnection))// check if such line exists in [GraphByDate] table
+                        {
+                            selectGraphByDate.Parameters.AddWithValue("user_source_id", lineParent[3]);// ↑user_id
+                            selectGraphByDate.Parameters.AddWithValue("user_target_id", lineChild[3]);// user_id
+                            selectGraphByDate.Parameters.AddWithValue("date", Convert.ToDateTime(lineParent["start_time"]).Date);// date should be unique
+                            selectGraphByDate.Parameters.AddWithValue("zone", lineParent["zone"]);// zone = ↑zone
+                            selectGraphByDate.Parameters.AddWithValue("floor", lineParent["floor"]);// floor = ↑floor
+                            int lineExist = 0;
+                            if (selectGraphByDate.ExecuteScalar() != null)// else there are no rows with such arguments
+                                lineExist = (int)selectGraphByDate.ExecuteScalar();// Get number of rows (check if such line exists in [GraphByDate] table)
+
+                            if (lineExist > 0)// line already exists, then UPDATE
+                            {
+                                using (SqlCommand updateGraphByDate = new SqlCommand("UPDATE [GraphByDate] SET [duration] = @duration, [times] = @times WHERE ([user_source_id] = @user_source_id AND [user_target_id] = @user_target_id) OR ([user_source_id] = @user_target_id AND [user_target_id] = @user_source_id) AND [date] = @date AND [zone] = @zone AND [floor] = @floor;", sqlConnection))// update
+                                {
+                                    updateGraphByDate.Parameters.AddWithValue("user_source_id", lineParent[3]);// user_id
+                                    updateGraphByDate.Parameters.AddWithValue("user_target_id", lineChild[3]);// user_id
+                                    updateGraphByDate.Parameters.AddWithValue("date", Convert.ToDateTime(lineParent["start_time"]).Date);// date should be unique
+                                    updateGraphByDate.Parameters.AddWithValue("zone", lineParent["zone"]);// zone = ↑zone
+                                    updateGraphByDate.Parameters.AddWithValue("floor", lineParent["floor"]);// floor = ↑floor
+
+                                    interval = Convert.ToDateTime(lineChild["end_time"]) - Convert.ToDateTime(lineParent["start_time"]);
+                                    intervalMinutes = interval.Minutes;// time difference (duration) in minutes
+
+                                    int durationTemp = 0;
+                                    int timesTemp = 0;
+                                    using (SqlDataReader selectGraphByDateReader = selectGraphByDate.ExecuteReader())
+                                    {// read previous values with selectGraphByDate request
+                                        if (selectGraphByDateReader.HasRows)
+                                        {
+                                            selectGraphByDateReader.Read(); // read first row
+                                            durationTemp = (int)selectGraphByDateReader["duration"];// get previous value of Duration
+                                            timesTemp = (int)selectGraphByDateReader["times"];// get previous value of Times
+                                        }// if
+                                        selectGraphByDateReader.Close(); // <- too easy to forget
+                                        selectGraphByDateReader.Dispose(); // <- too easy to forget
+                                    }// end of reader
+                                    updateGraphByDate.Parameters.AddWithValue("duration", durationTemp + intervalMinutes);
+                                    updateGraphByDate.Parameters.AddWithValue("times", timesTemp + 1);
+
+                                    try
+                                    {
+                                        updateGraphByDate.ExecuteNonQuery();// execute UPDATE
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.Out.WriteAsync("\n\n+------------------+\nCannot UPDATE [GraphByDate]\nuser_source_id: " + lineParent[3] + "\nuser_target_id: " + lineChild[3] + "\ndate: " + Convert.ToDateTime(lineParent["start_time"]).Date + "\nzone: " + lineParent["zone"] + "\nfloor: " + lineParent["floor"] + "");
+                                        continue;
+                                    }
+                                }// UPDATE INTO [GraphByDate]
+                            }// if
+                            else// there is no such lines, then INSERT
+                            {
+                                using (SqlCommand insertGraphByDate = new SqlCommand("INSERT INTO [GraphByDate] (date, user_source_id, user_target_id, duration, times, zone, floor) VALUES (@date, @user_source_id, @user_target_id, @duration, @times, @zone, @floor);", sqlConnection))// get all lines from [intervals] where [start_time] is between ↑ start_time and ↑ end_time
+                                {
+                                    insertGraphByDate.Parameters.AddWithValue("date", Convert.ToDateTime(lineParent["start_time"]).Date);
+                                    insertGraphByDate.Parameters.AddWithValue("user_source_id", lineParent[3]);// user_id
+                                    insertGraphByDate.Parameters.AddWithValue("user_target_id", lineChild[3]);// user_id
+                                    insertGraphByDate.Parameters.AddWithValue("zone", lineParent["zone"]);// zone = ↑zone
+                                    insertGraphByDate.Parameters.AddWithValue("floor", lineParent["floor"]);// floor = ↑floor
+
+                                    interval = Convert.ToDateTime(lineChild["end_time"]) - Convert.ToDateTime(lineParent["start_time"]);
+                                    intervalMinutes = interval.Minutes;// time difference (duration) in minutes
+
+                                    insertGraphByDate.Parameters.AddWithValue("duration", intervalMinutes);
+                                    insertGraphByDate.Parameters.AddWithValue("times", 1);
+
+                                    try
+                                    {
+                                        insertGraphByDate.ExecuteNonQuery();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.Out.WriteAsync("\n\n+------------------+\nCannot INSERT INTO [GraphByDate]\nuser_source_id: " + lineParent[3] + "\nuser_target_id: " + lineChild[3] + "\ndate: " + Convert.ToDateTime(lineParent["start_time"]).Date + "\nzone: " + lineParent["zone"] + "\nfloor: " + lineParent["floor"] + "");
+                                        continue;
+                                    }
+
+                                }// INSERT INTO [GraphByDate]
+                            }// else
+                        }// SELECT * FROM [GraphByDate]                                
+                    }// foreach
+                }// SELECT * FROM [intervals] WHERE [start_time]
+
+                sqlConnection.Close();// close connection
+            }// end of connection
+
+            //Console.Out.WriteLineAsync("Graph Thread left: " + _numerOfThreadsNotYetCompleted.ToString());
+            if (Interlocked.Decrement(ref _numerOfThreadsNotYetCompleted) == 0)
+                _waitThreads.Set();// Signal that work is finished
+        }// fillInGraph
+
         private void backgroundWorkerTable_DoWork(object sender, DoWorkEventArgs e)
         {
             /*************************************************************************************
@@ -186,6 +365,7 @@ namespace PACS_Analyzer
                 }
                 catch (Exception ex)
                 {
+                    Console.Out.WriteAsync("\n\n+------------------+\n\nCannot TRUNCATE TABLE [intervals]\nException: " + ex.Message);
                     //MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }// if cannot delete table. Most likely table doesn't exist
 
@@ -200,56 +380,27 @@ namespace PACS_Analyzer
             // List of lines with User(client) filter
             var timeGapList = from line in result
                               where line.timestamp >= FCSOBG.timeFrom && line.timestamp <= FCSOBG.timeTill
+                              orderby line.timestamp
                               select line;
 
-            TimeSpan interval = new TimeSpan();
-            int intervalMinutes = -1;
             int iP = 1;// counter for Progress Change and ID
-            int timeGapListCount = timeGapList.Count();// length of timeGapList
-
-            using (SqlConnection sqlConnection = new SqlConnection(FCSOBG.connectionString))
+            _waitThreads = new ManualResetEvent(false);
+            _numerOfThreadsNotYetCompleted = timeGapList.Count() - 1;
+            foreach (var line in timeGapList)
             {
-                sqlConnection.Open();// open connection
-                foreach (var line in timeGapList)
+                try
                 {
-                    var nextTimeLine = (from nextTime in timeGapList
-                                        where nextTime.empid == line.empid && nextTime.timestamp > line.timestamp
-                                        select nextTime).FirstOrDefault();// next timeStamp for this user. FINISH time
-                    try
-                    {
-                        interval = nextTimeLine.timestamp - line.timestamp;
-                        intervalMinutes = interval.Minutes;// time difference (duration) in minutes
-
-                        // INSERT INTO [intervals]
-                        SqlCommand insertIntervals = new SqlCommand("INSERT INTO [intervals] (start_time, end_time, user_id, floor, zone, duration) VALUES (@start_time, @end_time, @user_id, @floor, @zone, @duration)", sqlConnection);
-                        try
-                        {
-                            insertIntervals.Parameters.AddWithValue("start_time", line.timestamp);
-                            insertIntervals.Parameters.AddWithValue("end_time", nextTimeLine.timestamp);
-                            insertIntervals.Parameters.AddWithValue("user_id", FCSOBG.userList.First(g => g.Key.empID == line.empid).Key.id);// find UserId from FormCoreShare obj
-                            insertIntervals.Parameters.AddWithValue("duration", intervalMinutes);
-                            insertIntervals.Parameters.AddWithValue("floor", line.floor);
-                            insertIntervals.Parameters.AddWithValue("zone", line.zone);
-                            insertIntervals.ExecuteNonQuery();
-                        }
-                        catch (Exception ex)
-                        {
-                            //the end of list for this user
-                        }
-
-                    }
-                    catch// there is no FINISH time
-                    {
-                        FCSOBG.errorText = "no FINISH time";
-                        continue;
-                    }// end of try/catch
-                    backgroundWorkerTable.ReportProgress((iP * 100) / timeGapListCount);
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(fillInIntervals), new object[] { line, timeGapList });
+                    backgroundWorkerTable.ReportProgress((iP * 100) / timeGapList.Count());
+                    //Console.Out.WriteLineAsync("And left: " + Convert.ToString(timeGapList.Count() - iP));
                     iP++;
-                }// end of foreach
-                sqlConnection.Close();// close connection
-            }// end of connection
-
-
+                }
+                catch (Exception ez)
+                {
+                    Console.Out.WriteLineAsync(ez.ToString());
+                }
+            }// end of foreach
+            _waitThreads.WaitOne();// Wait until the task is complete
 
             /*************************************************************************************
             ********          create and fill table INTERVALS    - FINISH                ********
@@ -259,6 +410,7 @@ namespace PACS_Analyzer
             /*************************************************************************************
             ********          create and fill table GRAPHBYDAY    - START                ********
             *************************************************************************************/
+
             using (SqlConnection sqlConnection = new SqlConnection(FCSOBG.connectionString))
             {
                 sqlConnection.Open();// open connection
@@ -272,109 +424,33 @@ namespace PACS_Analyzer
                     }
                     catch (Exception ex)
                     {
+                        Console.Out.WriteAsync("\n\n+------------------+\n\nCannot TRUNCATE TABLE [GraphByDate]\nException: " + ex.Message);
                         //MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }// if cannot delete table. Most likely table doesn't exist
                 }
 
-
-                using (SqlCommand readIntervalsParent = new SqlCommand("SELECT * FROM [intervals]", sqlConnection))// First, read all table [intervals]
+                using (SqlCommand readIntervalsParent = new SqlCommand("SELECT * FROM [intervals] ORDER BY [start_time]", sqlConnection))// First, read all table [intervals]
                 {
                     SqlDataAdapter da = new SqlDataAdapter(readIntervalsParent);
                     DataTable dt = new DataTable();
                     da.Fill(dt);// Put all data to DataTable formay
+
+                    _waitThreads = new ManualResetEvent(false);
+                    _numerOfThreadsNotYetCompleted = dt.Rows.Count;
                     iP = 1;// counter for Progress Change and ID
                     foreach (DataRow lineParent in dt.Rows)// read [intervals] line by line
                     {
-                        using (SqlCommand readIntervalsChild = new SqlCommand("SELECT * FROM [intervals] WHERE [start_time] > @our_start_time AND [start_time] < @our_end_time AND [floor] = @floor AND [zone] = @zone", sqlConnection))// get all lines from [intervals] where [start_time] is between ↑start_time and ↑end_time AND floor = ↑floor, zone = ↑zone
-                        {// get all users who also have been there
-                            readIntervalsChild.Parameters.AddWithValue("our_start_time", lineParent["start_time"]);
-                            readIntervalsChild.Parameters.AddWithValue("our_end_time", lineParent["end_time"]);
-                            readIntervalsChild.Parameters.AddWithValue("floor", lineParent["floor"]);
-                            readIntervalsChild.Parameters.AddWithValue("zone", lineParent["zone"]);
-                            SqlDataAdapter daChild = new SqlDataAdapter(readIntervalsChild);
-                            DataTable dtChild = new DataTable();
-                            daChild.Fill(dtChild);// Put all data to DataTable formay
-                            foreach (DataRow lineChild in dtChild.Rows)// read [intervals]Child line by line
-                            {// for each user who has been there
-                                using (SqlCommand selectGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE ([user_source_id] = @user_source_id AND [user_target_id] = @user_target_id) OR ([user_source_id] = @user_target_id AND [user_target_id] = @user_source_id) AND [date] = @date AND [zone] = @zone AND [floor] = @floor;", sqlConnection))// check if such line exists in [GraphByDate] table
-                                {
-                                    selectGraphByDate.Parameters.AddWithValue("user_source_id", lineParent[3]);// ↑user_id
-                                    selectGraphByDate.Parameters.AddWithValue("user_target_id", lineChild[3]);// user_id
-                                    selectGraphByDate.Parameters.AddWithValue("date", Convert.ToDateTime(lineParent["start_time"]).Date);// date should be unique
-                                    selectGraphByDate.Parameters.AddWithValue("zone", lineParent["zone"]);// zone = ↑zone
-                                    selectGraphByDate.Parameters.AddWithValue("floor", lineParent["floor"]);// floor = ↑floor
-                                    int lineExist = 0;
-                                    try// if there are any rows
-                                    {
-                                        lineExist = (int)selectGraphByDate.ExecuteScalar();// Get number of rows (check if such line exists in [GraphByDate] table)
-                                    }
-                                    catch
-                                    {
-                                        // table is empty
-                                    }
-
-                                    if (lineExist > 0)// line already exists, then UPDATE
-                                    {
-                                        using (SqlCommand updateGraphByDate = new SqlCommand("UPDATE [GraphByDate] SET [duration] = @duration, [times] = @times WHERE ([user_source_id] = @user_source_id AND [user_target_id] = @user_target_id) OR ([user_source_id] = @user_target_id AND [user_target_id] = @user_source_id) AND [date] = @date AND [zone] = @zone AND [floor] = @floor;", sqlConnection))// update
-                                        {
-                                            updateGraphByDate.Parameters.AddWithValue("user_source_id", lineParent[3]);// user_id
-                                            updateGraphByDate.Parameters.AddWithValue("user_target_id", lineChild[3]);// user_id
-                                            updateGraphByDate.Parameters.AddWithValue("date", Convert.ToDateTime(lineParent["start_time"]).Date);// date should be unique
-                                            updateGraphByDate.Parameters.AddWithValue("zone", lineParent["zone"]);// zone = ↑zone
-                                            updateGraphByDate.Parameters.AddWithValue("floor", lineParent["floor"]);// floor = ↑floor
-
-                                            interval = Convert.ToDateTime(lineChild["end_time"]) - Convert.ToDateTime(lineParent["start_time"]);
-                                            intervalMinutes = interval.Minutes;// time difference (duration) in minutes
-
-                                            int durationTemp = 0;
-                                            int timesTemp = 0;
-                                            using (SqlDataReader selectGraphByDateReader = selectGraphByDate.ExecuteReader())
-                                            {// read previous values with selectGraphByDate request
-                                                if (selectGraphByDateReader.HasRows)
-                                                {
-                                                    selectGraphByDateReader.Read(); // read first row
-                                                    durationTemp = (int)selectGraphByDateReader["duration"];// get previous value of Duration
-                                                    timesTemp = (int)selectGraphByDateReader["times"];// get previous value of Times
-                                                }// if
-                                                selectGraphByDateReader.Close(); // <- too easy to forget
-                                                selectGraphByDateReader.Dispose(); // <- too easy to forget
-                                            }// end of reader
-                                            updateGraphByDate.Parameters.AddWithValue("duration", durationTemp + intervalMinutes);
-                                            updateGraphByDate.Parameters.AddWithValue("times", timesTemp + 1);
-
-                                            updateGraphByDate.ExecuteNonQuery();// execute UPDATE
-                                        }// UPDATE INTO [GraphByDate]
-                                    }// if
-                                    else// there is no such lines, then INSERT
-                                    {
-                                        using (SqlCommand insertGraphByDate = new SqlCommand("INSERT INTO [GraphByDate] (date, user_source_id, user_target_id, duration, times, zone, floor) VALUES (@date, @user_source_id, @user_target_id, @duration, @times, @zone, @floor);", sqlConnection))// get all lines from [intervals] where [start_time] is between ↑ start_time and ↑ end_time
-                                        {
-                                            insertGraphByDate.Parameters.AddWithValue("date", Convert.ToDateTime(lineParent["start_time"]).Date);
-                                            insertGraphByDate.Parameters.AddWithValue("user_source_id", lineParent[3]);// user_id
-                                            insertGraphByDate.Parameters.AddWithValue("user_target_id", lineChild[3]);// user_id
-                                            insertGraphByDate.Parameters.AddWithValue("zone", lineParent["zone"]);// zone = ↑zone
-                                            insertGraphByDate.Parameters.AddWithValue("floor", lineParent["floor"]);// floor = ↑floor
-
-                                            interval = Convert.ToDateTime(lineChild["end_time"]) - Convert.ToDateTime(lineParent["start_time"]);
-                                            intervalMinutes = interval.Minutes;// time difference (duration) in minutes
-
-                                            insertGraphByDate.Parameters.AddWithValue("duration", intervalMinutes);
-                                            insertGraphByDate.Parameters.AddWithValue("times", 1);
-
-                                            insertGraphByDate.ExecuteNonQuery();
-                                        }// INSERT INTO [GraphByDate]
-                                    }// else
-                                }// SELECT * FROM [GraphByDate]                                
-                            }// foreach
-                        }// SELECT * FROM [intervals] WHERE [start_time]
+                        ThreadPool.QueueUserWorkItem(new WaitCallback(fillInGraph), new object[] { lineParent });
                         backgroundWorkerTable.ReportProgress((iP * 100) / dt.Rows.Count);
                         iP++;
                     }// foreach
+                    _waitThreads.WaitOne();// Wait until the task is complete
                 }// SELECT * FROM [intervals]
 
 
                 sqlConnection.Close();// close connection
             }// end of connection
+
 
             /*************************************************************************************
             ********          create and fill table GRAPHBYDAY    - FINISH                ********
@@ -433,6 +509,7 @@ namespace PACS_Analyzer
 
         private void buttonFind_Click(object sender, EventArgs e)
         {
+            labelWorkinProgress.Visible = true;// Work in progress...
             if (Convert.ToDateTime(comboBoxTill.SelectedItem.ToString()).Subtract(Convert.ToDateTime(comboBoxFrom.SelectedItem.ToString())) <= TimeSpan.Zero)
             {
                 MessageBox.Show("Please make sure that your chosen left date earlier than the right one\nDebug info: Line 208, method: buttonFind_Click", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -445,6 +522,7 @@ namespace PACS_Analyzer
             progressBarMain.Visible = true;
             labelProgress.Visible = true;
             backgroundWorkerTable.RunWorkerAsync(FCSO);
+            Console.Out.WriteLineAsync("backgroundWorkerTable - started");
         }// end of buttonFind_Click
 
         private void backgroundWorkerTable_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -453,6 +531,8 @@ namespace PACS_Analyzer
             progressBarMain.Visible = false;
             progressBarMain.Value = 0;
             labelProgress.Visible = false;
+            labelWorkinProgress.Visible = false;// Work in progress...
+            Console.Out.WriteLineAsync("backgroundWorkerTable - finished");
         }// end of backgroundWorkerTable_RunWorkerCompleted
 
         private void backgroundWorkerTable_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -489,9 +569,7 @@ namespace PACS_Analyzer
             foreach (KeyValuePair<User, int> userPair in FCSO.userList)// add all users to ThreadPool to save files
             {
                 ThreadPool.QueueUserWorkItem(new WaitCallback(saveToFileByUser), userPair.Key);
-                richTextBoxDebug.AppendText(userPair.Key.empID+" - started\n");
             }// foreach
-            richTextBoxDebug.AppendText("Done");
         }// linkLabelGenerateGraphs_LinkClicked
 
         private void saveToFileByUser(object userObj)
@@ -512,7 +590,7 @@ namespace PACS_Analyzer
                         DataTable dt = new DataTable();
                         da.Fill(dt);// Put all data to DataTable formay
 
-                        string path = "users/"+user.id + "_user_" + user.lastName + "_" + user.firstName + ".txt";
+                        string path = "users/" + user.id + "_user_" + user.lastName + "_" + user.firstName + ".txt";
                         try
                         {
                             if (File.Exists(path))

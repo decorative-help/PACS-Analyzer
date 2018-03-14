@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="35cc9fe4-b1f8-41c6-87bb-96a7b2f5434a" name="Default" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="Form1.cs" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/PACS Analyzer/Form1.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="815">
+              <caret line="585" column="120" lean-forward="false" selection-start-line="585" selection-start-column="120" selection-end-line="585" selection-end-column="120" />
+              <folding>
+                <marker date="1520363637400" expanded="true" signature="6:367" ph="..." />
+                <marker date="1520363637400" expanded="true" signature="254:307" ph="/* for File ... */" />
+                <marker date="1520363637400" expanded="true" signature="409:33569" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="452:33536" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="467:580" ph="/* Global Variables ... */" />
+                <marker date="1520363637400" expanded="true" signature="724:1283" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="1293:1353" ph="/* Open file dialog and choose a File ... */" />
+                <marker date="1520363637400" expanded="true" signature="1450:1698" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="1473:1595" ph="/* openFileDialogChooseFile.Filter = &quot;CSV files|*.csv&quot;; ... */" />
+                <marker date="1520363637400" expanded="true" signature="1786:2569" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="1812:2295" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="2328:2559" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="2579:2619" ph="/* Work with file ... */" />
+                <marker date="1520363637400" expanded="true" signature="2673:3981" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="2851:2954" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="2986:3254" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="3614:3890" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="4045:4852" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="4455:4651" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="4936:5708" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="4959:5228" ph="/* openFileDialogChooseFile - START ... */" />
+                <marker date="1520363637400" expanded="true" signature="5429:5698" ph="/* openFileDialogChooseFile - FINISH ... */" />
+                <marker date="1520363637400" expanded="true" signature="5810:5959" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="6067:6829" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="6173:6237" ph="/* DataSources for DropDown Lists ... */" />
+                <marker date="1520363637400" expanded="true" signature="6877:9840" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="7371:9748" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="7915:9439" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="8403:9139" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="9179:9413" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="9506:9657" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="9902:19775" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="10219:19683" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="10659:19563" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="11437:19535" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="11906:19451" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="12667:13180" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="12730:13069" ph="/* table is empty ... */" />
+                <marker date="1520363637400" expanded="true" signature="13213:13429" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="13512:17018" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="13942:16960" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="15111:15958" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="15280:15717" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="16241:16411" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="16467:16926" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="17094:19418" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="17498:19360" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="18652:18805" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="18861:19325" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="19874:27618" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="19897:20180" ph="/* fill table INTERVALS    - START ... */" />
+                <marker date="1520363637400" expanded="true" signature="20426:21173" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="20642:20728" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="20765:21042" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="21798:22053" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="22152:22435" ph="/* create and fill table INTERVALS    - FINISH ... */" />
+                <marker date="1520363637400" expanded="true" signature="22450:22733" ph="/* create and fill table GRAPHBYDAY    - START ... */" />
+                <marker date="1520363637400" expanded="true" signature="22827:24673" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="23039:23597" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="23081:23185" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="23226:23521" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="23772:24571" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="24189:24467" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="24708:24992" ph="/* create and fill table GRAPHBYDAY    - FINISH ... */" />
+                <marker date="1520363637400" expanded="true" signature="25006:25273" ph="/* Anomalies search    - START ... */" />
+                <marker date="1520363637400" expanded="true" signature="25367:27216" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="25634:27113" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="25673:25790" ph="/* foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line ... */" />
+                <marker date="1520363637400" expanded="true" signature="25811:26468" ph="/* int sevenDays = 7;// look for the day from the next week ... */" />
+                <marker date="1520363637400" expanded="true" signature="26489:27057" ph="/* Dictionary&lt;string, List&lt;int&gt;&gt; arrayByDuration = new Dictionary&lt;string,List&lt;int&gt;&gt;();// dictionary for array of  ... */" />
+                <marker date="1520363637400" expanded="true" signature="27250:27518" ph="/* Anomalies search    - FINISH ... */" />
+                <marker date="1520363637400" expanded="true" signature="27723:28642" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="27961:28228" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="28777:29083" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="29236:29457" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="29567:29588" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="29660:29801" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="29873:29996" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="30102:30575" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="30181:30315" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="30431:30555" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="30668:33415" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="30711:33400" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="30881:33366" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="31198:33255" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="31671:33070" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="31917:33036" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="32397:32997" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="33122:33233" ph="{...}" />
+                <marker date="1520363637400" expanded="true" signature="33509:33530" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/PACS Analyzer/Form1.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/PACS Analyzer/Form1.Designer.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/PACS Analyzer/Form1.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-7" />
+    <option name="width" value="1468" />
+    <option name="height" value="1047" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>AngularJS</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="SolutionExplorer" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="SolutionExplorer">
+        <subPane>
+          <expand>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="PACS Analyzer (2 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="PACS Analyzer (2 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="PACS Analyzer" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <option name="show-file-system" value="false" />
+        <option name="show-all-items" value="false" />
+      </pane>
+      <pane id="Scratches" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="HbShouldOpenHtmlAsHb" value="" />
+    <property name="SearchEverywhereHistoryKey" value="code&#9;ACTION&#9;ChangeCodeStyleScheme" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C#" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Default" type="DotNetProject" factoryName=".NET Project">
+      <option name="EXE_PATH" value="$PROJECT_DIR$/PACS Analyzer/bin/Debug/PACS Analyzer.exe" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PACS Analyzer/bin/Debug" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <envs />
+      <option name="USE_MONO" value="0" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="PROJECT_PATH" value="$PROJECT_DIR$/PACS Analyzer/PACS Analyzer.csproj" />
+      <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
+      <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
+      <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
+      <option name="PROJECT_KIND" value="Console" />
+      <option name="PROJECT_TFM" value=".NETFramework,Version=v4.5" />
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="35cc9fe4-b1f8-41c6-87bb-96a7b2f5434a" name="Default" comment="" />
+      <created>1521016724258</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1521016724258</updated>
+      <workItem from="1521016726403" duration="1321000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="1321000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-7" y="0" width="1468" height="1047" extended-state="0" />
+    <layout>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Errors In Solution" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32996634" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Unit Tests" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31343284" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="NuGet" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23829201" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32942432" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/PACS Analyzer/Form1.Designer.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1520359456482" expanded="true" signature="23:18847" ph="{...}" />
+            <marker date="1520359456482" expanded="true" signature="52:18845" ph="{...}" />
+            <marker date="1520359456482" expanded="true" signature="67:143" ph="/// Required designer variable. ... " />
+            <marker date="1520359456482" expanded="true" signature="221:412" ph="/// Clean up any resources being used. ... " />
+            <marker date="1520359456482" expanded="true" signature="468:642" ph="{...}" />
+            <marker date="1520359456482" expanded="true" signature="529:595" ph="{...}" />
+            <marker date="1520359456482" expanded="true" signature="652:17601" ph="Windows Form Designer generated code" />
+            <marker date="1520359456482" expanded="true" signature="706:869" ph="/// Required method for Designer support - do not modify ... " />
+            <marker date="1520359456482" expanded="true" signature="912:17581" ph="{...}" />
+            <marker date="1520359456482" expanded="true" signature="2689:2739" ph="/* linkLabelChoose ... */" />
+            <marker date="1520359456482" expanded="true" signature="3844:3895" ph="/* groupBoxSettings ... */" />
+            <marker date="1520359456482" expanded="true" signature="5255:5297" ph="/* labelTo ... */" />
+            <marker date="1520359456482" expanded="true" signature="5610:5654" ph="/* labelFrom ... */" />
+            <marker date="1520359456482" expanded="true" signature="5983:6041" ph="/* linkLabelGenerateGraphs ... */" />
+            <marker date="1520359456482" expanded="true" signature="6975:7016" ph="/* label2 ... */" />
+            <marker date="1520359456482" expanded="true" signature="7639:7680" ph="/* label1 ... */" />
+            <marker date="1520359456482" expanded="true" signature="8226:8271" ph="/* buttonFind ... */" />
+            <marker date="1520359456482" expanded="true" signature="9404:9451" ph="/* comboBoxTill ... */" />
+            <marker date="1520359456482" expanded="true" signature="9897:9944" ph="/* comboBoxFrom ... */" />
+            <marker date="1520359456482" expanded="true" signature="10390:10442" ph="/* labelPeriodOfTime ... */" />
+            <marker date="1520359456482" expanded="true" signature="10932:10980" ph="/* labelProgress ... */" />
+            <marker date="1520359456482" expanded="true" signature="11461:11511" ph="/* progressBarMain ... */" />
+            <marker date="1520359456482" expanded="true" signature="12129:12173" ph="/* labelPACS ... */" />
+            <marker date="1520359456482" expanded="true" signature="12754:12802" ph="/* labelAnalyzer ... */" />
+            <marker date="1520359456482" expanded="true" signature="13499:13558" ph="/* openFileDialogChooseFile ... */" />
+            <marker date="1520359456482" expanded="true" signature="13786:13841" ph="/* backgroundWorkerFile ... */" />
+            <marker date="1520359456482" expanded="true" signature="14442:14498" ph="/* backgroundWorkerTable ... */" />
+            <marker date="1520359456482" expanded="true" signature="15107:15162" ph="/* databaseMainDataSet1 ... */" />
+            <marker date="1520359456482" expanded="true" signature="15365:15419" ph="/* labelWorkinProgress ... */" />
+            <marker date="1520359456482" expanded="true" signature="16054:16097" ph="/* MainForm ... */" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PACS Analyzer/Form1.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="815">
+          <caret line="585" column="120" lean-forward="false" selection-start-line="585" selection-start-column="120" selection-end-line="585" selection-end-column="120" />
+          <folding>
+            <marker date="1520363637400" expanded="true" signature="6:367" ph="..." />
+            <marker date="1520363637400" expanded="true" signature="254:307" ph="/* for File ... */" />
+            <marker date="1520363637400" expanded="true" signature="409:33569" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="452:33536" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="467:580" ph="/* Global Variables ... */" />
+            <marker date="1520363637400" expanded="true" signature="724:1283" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="1293:1353" ph="/* Open file dialog and choose a File ... */" />
+            <marker date="1520363637400" expanded="true" signature="1450:1698" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="1473:1595" ph="/* openFileDialogChooseFile.Filter = &quot;CSV files|*.csv&quot;; ... */" />
+            <marker date="1520363637400" expanded="true" signature="1786:2569" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="1812:2295" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="2328:2559" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="2579:2619" ph="/* Work with file ... */" />
+            <marker date="1520363637400" expanded="true" signature="2673:3981" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="2851:2954" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="2986:3254" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="3614:3890" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="4045:4852" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="4455:4651" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="4936:5708" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="4959:5228" ph="/* openFileDialogChooseFile - START ... */" />
+            <marker date="1520363637400" expanded="true" signature="5429:5698" ph="/* openFileDialogChooseFile - FINISH ... */" />
+            <marker date="1520363637400" expanded="true" signature="5810:5959" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="6067:6829" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="6173:6237" ph="/* DataSources for DropDown Lists ... */" />
+            <marker date="1520363637400" expanded="true" signature="6877:9840" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="7371:9748" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="7915:9439" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="8403:9139" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="9179:9413" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="9506:9657" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="9902:19775" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="10219:19683" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="10659:19563" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="11437:19535" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="11906:19451" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="12667:13180" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="12730:13069" ph="/* table is empty ... */" />
+            <marker date="1520363637400" expanded="true" signature="13213:13429" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="13512:17018" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="13942:16960" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="15111:15958" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="15280:15717" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="16241:16411" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="16467:16926" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="17094:19418" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="17498:19360" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="18652:18805" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="18861:19325" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="19874:27618" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="19897:20180" ph="/* fill table INTERVALS    - START ... */" />
+            <marker date="1520363637400" expanded="true" signature="20426:21173" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="20642:20728" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="20765:21042" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="21798:22053" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="22152:22435" ph="/* create and fill table INTERVALS    - FINISH ... */" />
+            <marker date="1520363637400" expanded="true" signature="22450:22733" ph="/* create and fill table GRAPHBYDAY    - START ... */" />
+            <marker date="1520363637400" expanded="true" signature="22827:24673" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="23039:23597" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="23081:23185" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="23226:23521" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="23772:24571" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="24189:24467" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="24708:24992" ph="/* create and fill table GRAPHBYDAY    - FINISH ... */" />
+            <marker date="1520363637400" expanded="true" signature="25006:25273" ph="/* Anomalies search    - START ... */" />
+            <marker date="1520363637400" expanded="true" signature="25367:27216" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="25634:27113" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="25673:25790" ph="/* foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line ... */" />
+            <marker date="1520363637400" expanded="true" signature="25811:26468" ph="/* int sevenDays = 7;// look for the day from the next week ... */" />
+            <marker date="1520363637400" expanded="true" signature="26489:27057" ph="/* Dictionary&lt;string, List&lt;int&gt;&gt; arrayByDuration = new Dictionary&lt;string,List&lt;int&gt;&gt;();// dictionary for array of  ... */" />
+            <marker date="1520363637400" expanded="true" signature="27250:27518" ph="/* Anomalies search    - FINISH ... */" />
+            <marker date="1520363637400" expanded="true" signature="27723:28642" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="27961:28228" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="28777:29083" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="29236:29457" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="29567:29588" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="29660:29801" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="29873:29996" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="30102:30575" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="30181:30315" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="30431:30555" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="30668:33415" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="30711:33400" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="30881:33366" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="31198:33255" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="31671:33070" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="31917:33036" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="32397:32997" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="33122:33233" ph="{...}" />
+            <marker date="1520363637400" expanded="true" signature="33509:33530" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

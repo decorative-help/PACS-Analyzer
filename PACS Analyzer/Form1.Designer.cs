@@ -48,7 +48,7 @@
             this.backgroundWorkerFile = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorkerTable = new System.ComponentModel.BackgroundWorker();
             this.databaseMainDataSet1 = new PACS_Analyzer.DatabaseMainDataSet();
-            this.richTextBoxDebug = new System.Windows.Forms.RichTextBox();
+            this.labelWorkinProgress = new System.Windows.Forms.Label();
             this.groupBoxSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.databaseMainDataSet1)).BeginInit();
             this.SuspendLayout();
@@ -81,8 +81,6 @@
             this.groupBoxSettings.Controls.Add(this.comboBoxFrom);
             this.groupBoxSettings.Controls.Add(this.labelPeriodOfTime);
             this.groupBoxSettings.Controls.Add(this.linkLabelChoose);
-            this.groupBoxSettings.Controls.Add(this.labelProgress);
-            this.groupBoxSettings.Controls.Add(this.progressBarMain);
             this.groupBoxSettings.Font = new System.Drawing.Font("Lucida Sans", 12.25F);
             this.groupBoxSettings.ForeColor = System.Drawing.Color.Black;
             this.groupBoxSettings.Location = new System.Drawing.Point(12, 12);
@@ -199,9 +197,9 @@
             // 
             this.labelProgress.AutoSize = true;
             this.labelProgress.BackColor = System.Drawing.Color.Transparent;
-            this.labelProgress.Location = new System.Drawing.Point(374, 0);
+            this.labelProgress.Location = new System.Drawing.Point(294, 321);
             this.labelProgress.Name = "labelProgress";
-            this.labelProgress.Size = new System.Drawing.Size(39, 19);
+            this.labelProgress.Size = new System.Drawing.Size(37, 23);
             this.labelProgress.TabIndex = 12;
             this.labelProgress.Text = "0/0";
             this.labelProgress.Visible = false;
@@ -210,9 +208,9 @@
             // 
             this.progressBarMain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(241)))), ((int)(((byte)(237)))));
             this.progressBarMain.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(221)))), ((int)(((byte)(217)))));
-            this.progressBarMain.Location = new System.Drawing.Point(0, 1);
+            this.progressBarMain.Location = new System.Drawing.Point(12, 347);
             this.progressBarMain.Name = "progressBarMain";
-            this.progressBarMain.Size = new System.Drawing.Size(469, 23);
+            this.progressBarMain.Size = new System.Drawing.Size(319, 23);
             this.progressBarMain.TabIndex = 8;
             this.progressBarMain.Visible = false;
             // 
@@ -222,7 +220,7 @@
             this.labelPACS.BackColor = System.Drawing.Color.Transparent;
             this.labelPACS.Font = new System.Drawing.Font("Lucida Sans", 10.25F, System.Drawing.FontStyle.Bold);
             this.labelPACS.ForeColor = System.Drawing.Color.Black;
-            this.labelPACS.Location = new System.Drawing.Point(312, 349);
+            this.labelPACS.Location = new System.Drawing.Point(337, 354);
             this.labelPACS.Name = "labelPACS";
             this.labelPACS.Size = new System.Drawing.Size(44, 16);
             this.labelPACS.TabIndex = 6;
@@ -234,7 +232,7 @@
             this.labelAnalyzer.BackColor = System.Drawing.Color.Transparent;
             this.labelAnalyzer.Font = new System.Drawing.Font("Lucida Sans", 10.25F, System.Drawing.FontStyle.Bold);
             this.labelAnalyzer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.labelAnalyzer.Location = new System.Drawing.Point(362, 349);
+            this.labelAnalyzer.Location = new System.Drawing.Point(381, 354);
             this.labelAnalyzer.Name = "labelAnalyzer";
             this.labelAnalyzer.Size = new System.Drawing.Size(71, 16);
             this.labelAnalyzer.TabIndex = 7;
@@ -266,24 +264,29 @@
             this.databaseMainDataSet1.DataSetName = "DatabaseMainDataSet";
             this.databaseMainDataSet1.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
-            // richTextBoxDebug
+            // labelWorkinProgress
             // 
-            this.richTextBoxDebug.Location = new System.Drawing.Point(458, 13);
-            this.richTextBoxDebug.Name = "richTextBoxDebug";
-            this.richTextBoxDebug.Size = new System.Drawing.Size(258, 311);
-            this.richTextBoxDebug.TabIndex = 8;
-            this.richTextBoxDebug.Text = "";
+            this.labelWorkinProgress.AutoSize = true;
+            this.labelWorkinProgress.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelWorkinProgress.Location = new System.Drawing.Point(8, 327);
+            this.labelWorkinProgress.Name = "labelWorkinProgress";
+            this.labelWorkinProgress.Size = new System.Drawing.Size(128, 19);
+            this.labelWorkinProgress.TabIndex = 18;
+            this.labelWorkinProgress.Text = "Work in progress...";
+            this.labelWorkinProgress.Visible = false;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(236)))), ((int)(((byte)(236)))));
-            this.ClientSize = new System.Drawing.Size(768, 379);
-            this.Controls.Add(this.richTextBoxDebug);
+            this.ClientSize = new System.Drawing.Size(457, 379);
+            this.Controls.Add(this.labelWorkinProgress);
             this.Controls.Add(this.labelAnalyzer);
             this.Controls.Add(this.labelPACS);
             this.Controls.Add(this.groupBoxSettings);
+            this.Controls.Add(this.progressBarMain);
+            this.Controls.Add(this.labelProgress);
             this.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -321,7 +324,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private DatabaseMainDataSet databaseMainDataSet1;
-        private System.Windows.Forms.RichTextBox richTextBoxDebug;
+        private System.Windows.Forms.Label labelWorkinProgress;
     }
 }
 
