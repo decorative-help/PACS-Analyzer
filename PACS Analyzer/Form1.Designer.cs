@@ -54,7 +54,7 @@
             // 
             // groupBoxSettings
             // 
-            this.groupBoxSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(228)))), ((int)(((byte)(228)))), ((int)(((byte)(228)))));
+            this.groupBoxSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(227)))), ((int)(((byte)(227)))));
             this.groupBoxSettings.Controls.Add(this.label1);
             this.groupBoxSettings.Controls.Add(this.labelBar1);
             this.groupBoxSettings.Controls.Add(this.labelHorizontalBar1);
@@ -116,6 +116,7 @@
             // buttonBrowse
             // 
             this.buttonBrowse.BackColor = System.Drawing.Color.White;
+            this.buttonBrowse.FlatAppearance.BorderColor = System.Drawing.Color.Red;
             this.buttonBrowse.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonBrowse.Location = new System.Drawing.Point(37, 26);
             this.buttonBrowse.Name = "buttonBrowse";
@@ -208,8 +209,8 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(241)))), ((int)(((byte)(237)))));
-            this.progressBar1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(221)))), ((int)(((byte)(217)))));
+            this.progressBar1.BackColor = System.Drawing.Color.Gainsboro;
+            this.progressBar1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(129)))), ((int)(((byte)(213)))), ((int)(((byte)(84)))));
             this.progressBar1.Location = new System.Drawing.Point(12, 383);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(44, 23);
@@ -248,8 +249,8 @@
             // 
             // progressBar2
             // 
-            this.progressBar2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(241)))), ((int)(((byte)(237)))));
-            this.progressBar2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(221)))), ((int)(((byte)(217)))));
+            this.progressBar2.BackColor = System.Drawing.Color.Gainsboro;
+            this.progressBar2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(129)))), ((int)(((byte)(213)))), ((int)(((byte)(84)))));
             this.progressBar2.Location = new System.Drawing.Point(62, 383);
             this.progressBar2.Name = "progressBar2";
             this.progressBar2.Size = new System.Drawing.Size(91, 23);
@@ -259,8 +260,8 @@
             // 
             // progressBar3
             // 
-            this.progressBar3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(241)))), ((int)(((byte)(237)))));
-            this.progressBar3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(221)))), ((int)(((byte)(217)))));
+            this.progressBar3.BackColor = System.Drawing.Color.Gainsboro;
+            this.progressBar3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(129)))), ((int)(((byte)(213)))), ((int)(((byte)(84)))));
             this.progressBar3.Location = new System.Drawing.Point(159, 383);
             this.progressBar3.Name = "progressBar3";
             this.progressBar3.Size = new System.Drawing.Size(101, 23);

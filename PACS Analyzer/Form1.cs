@@ -170,7 +170,7 @@ namespace PACS_Analyzer
             DataRow lineParent = array[0] as DataRow;
             int iP = (int)array[1];
             int dtRowsCount = (int)array[2];
-            backgroundWorkerTable.ReportProgress((iP * 100) / dtRowsCount);
+            backgroundWorkerTable.ReportProgress((iP * 100) / dtRowsCount, new object[] { 2 });
 
             TimeSpan interval = new TimeSpan();
             int intervalMinutes = -1;
@@ -322,7 +322,7 @@ namespace PACS_Analyzer
             foreach (var line in timeGapList)
             {
                 ThreadPool.QueueUserWorkItem(new WaitCallback(fillInIntervals), new object[] { line, timeGapList });
-                backgroundWorkerTable.ReportProgress((iP * 100) / timeGapList.Count());
+                backgroundWorkerTable.ReportProgress((iP * 100) / timeGapList.Count(), new object[] { 1 });
                 iP++;
             }// end of foreach
             _waitThreads.WaitOne();// Wait until the task is complete
@@ -441,7 +441,13 @@ namespace PACS_Analyzer
 
         private void backgroundWorkerTable_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progressBar1.Value = e.ProgressPercentage;// Change the value of the ProgressBar to the BackgroundWorker progress
+            object[] array = e.UserState as object[];
+            if (array == null)
+                return;
+            if ((int)array[0] == 1)
+                progressBar1.Value = e.ProgressPercentage;
+            else
+                progressBar2.Value = e.ProgressPercentage;
         }// end of backgroundWorkerTable_ProgressChanged
 
         private void label2_Click(object sender, EventArgs e)
