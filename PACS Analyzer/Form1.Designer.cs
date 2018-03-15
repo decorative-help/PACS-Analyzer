@@ -43,7 +43,6 @@
             this.comboBoxFrom = new System.Windows.Forms.ComboBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.openFileDialogChooseFile = new System.Windows.Forms.OpenFileDialog();
-            this.backgroundWorkerFile = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorkerTable = new System.ComponentModel.BackgroundWorker();
             this.databaseMainDataSet1 = new PACS_Analyzer.DatabaseMainDataSet();
             this.labelWorkinProgress = new System.Windows.Forms.Label();
@@ -107,9 +106,10 @@
             // 
             // progressBarSteps
             // 
-            this.progressBarSteps.Location = new System.Drawing.Point(0, 0);
+            this.progressBarSteps.Location = new System.Drawing.Point(0, 1);
             this.progressBarSteps.Name = "progressBarSteps";
-            this.progressBarSteps.Size = new System.Drawing.Size(248, 10);
+            this.progressBarSteps.Size = new System.Drawing.Size(248, 5);
+            this.progressBarSteps.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBarSteps.TabIndex = 20;
             this.progressBarSteps.Click += new System.EventHandler(this.progressBarSteps_Click);
             // 
@@ -133,6 +133,7 @@
             this.labelTo.Size = new System.Drawing.Size(65, 15);
             this.labelTo.TabIndex = 17;
             this.labelTo.Text = "End time:";
+            this.labelTo.Visible = false;
             this.labelTo.Click += new System.EventHandler(this.labelTo_Click);
             // 
             // labelFrom
@@ -143,6 +144,7 @@
             this.labelFrom.Size = new System.Drawing.Size(72, 15);
             this.labelFrom.TabIndex = 16;
             this.labelFrom.Text = "Start time:";
+            this.labelFrom.Visible = false;
             this.labelFrom.Click += new System.EventHandler(this.labelFrom_Click);
             // 
             // linkLabelGenerateGraphs
@@ -155,6 +157,7 @@
             this.linkLabelGenerateGraphs.TabIndex = 14;
             this.linkLabelGenerateGraphs.TabStop = true;
             this.linkLabelGenerateGraphs.Text = "Generate Vectors";
+            this.linkLabelGenerateGraphs.Visible = false;
             this.linkLabelGenerateGraphs.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelGenerateGraphs_LinkClicked);
             // 
             // buttonFind
@@ -172,12 +175,14 @@
             this.buttonFind.TabIndex = 9;
             this.buttonFind.Text = "Find anomalies";
             this.buttonFind.UseVisualStyleBackColor = false;
+            this.buttonFind.Visible = false;
             this.buttonFind.Click += new System.EventHandler(this.buttonFind_Click);
             this.buttonFind.MouseEnter += new System.EventHandler(this.buttonFind_MouseEnter);
             this.buttonFind.MouseLeave += new System.EventHandler(this.buttonFind_MouseLeave);
             // 
             // comboBoxTill
             // 
+            this.comboBoxTill.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTill.Enabled = false;
             this.comboBoxTill.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBoxTill.FormattingEnabled = true;
@@ -185,10 +190,12 @@
             this.comboBoxTill.Name = "comboBoxTill";
             this.comboBoxTill.Size = new System.Drawing.Size(235, 23);
             this.comboBoxTill.TabIndex = 5;
+            this.comboBoxTill.Visible = false;
             this.comboBoxTill.SelectedIndexChanged += new System.EventHandler(this.comboBoxTill_SelectedIndexChanged);
             // 
             // comboBoxFrom
             // 
+            this.comboBoxFrom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxFrom.Enabled = false;
             this.comboBoxFrom.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBoxFrom.FormattingEnabled = true;
@@ -196,6 +203,7 @@
             this.comboBoxFrom.Name = "comboBoxFrom";
             this.comboBoxFrom.Size = new System.Drawing.Size(235, 23);
             this.comboBoxFrom.TabIndex = 3;
+            this.comboBoxFrom.Visible = false;
             this.comboBoxFrom.SelectedIndexChanged += new System.EventHandler(this.comboBoxFrom_SelectedIndexChanged);
             // 
             // progressBar1
@@ -213,14 +221,6 @@
             // 
             this.openFileDialogChooseFile.FileName = "FixedProxy_EmpData.csv";
             this.openFileDialogChooseFile.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialogChooseFile_FileOk);
-            // 
-            // backgroundWorkerFile
-            // 
-            this.backgroundWorkerFile.WorkerReportsProgress = true;
-            this.backgroundWorkerFile.WorkerSupportsCancellation = true;
-            this.backgroundWorkerFile.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerFile_DoWork);
-            this.backgroundWorkerFile.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerFile_ProgressChanged);
-            this.backgroundWorkerFile.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerFile_RunWorkerCompleted);
             // 
             // backgroundWorkerTable
             // 
@@ -300,7 +300,6 @@
         private System.Windows.Forms.ComboBox comboBoxFrom;
         private System.Windows.Forms.OpenFileDialog openFileDialogChooseFile;
         private System.Windows.Forms.Button buttonFind;
-        private System.ComponentModel.BackgroundWorker backgroundWorkerFile;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.ComponentModel.BackgroundWorker backgroundWorkerTable;
         private System.Windows.Forms.LinkLabel linkLabelGenerateGraphs;
