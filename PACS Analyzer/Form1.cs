@@ -12,6 +12,7 @@ using System.IO;// for File
 //using System.Linq;// for Query Language
 using FileHelpers;// CSVReader
 using System.Data.SqlClient;// SQL Connection
+using Microsoft.SqlServer.Server;
 
 namespace PACS_Analyzer
 {
@@ -330,6 +331,9 @@ namespace PACS_Analyzer
             /*
             * fill table GRAPHBYDAY
             **/
+
+
+            /*
             SqlDataAdapter da;
             DataTable dt;
             using (SqlConnection sqlConnection = new SqlConnection(_formCoreGlobalObject.connectionString))
@@ -356,7 +360,7 @@ namespace PACS_Analyzer
                 da.Fill(dt);// Put all data to DataTable format
                 sqlConnection.Close();// close connection
             }// end of connection
-
+            
             _waitThreads = new ManualResetEvent(false);
             _numerOfThreadsNotYetCompleted = dt.Rows.Count;
             iP = 1;// counter for Progress Change and ID
@@ -367,42 +371,66 @@ namespace PACS_Analyzer
             }// foreach
             _waitThreads.WaitOne();// Wait until the task is complete
 
-            /*
-            * Anomalies search
-            **/
+            */
 
-            //using (SqlConnection sqlConnection = new SqlConnection(_formCoreGlobalObject.connectionString))
-            //{
-            //sqlConnection.Open();// open connection
-            //using (SqlCommand readGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE [user_source_id] = @user_source_id;", sqlConnection))// First, read whole table [GraphByDate]
-            //{
-            //foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line
-            //{                        
-            /*int sevenDays = 7;// look for the day from the next week
-            var nextWeek = from date in dt.AsEnumerable()
-                                   where date.Field<int>("user_source_id") == line.Field<int>("user_source_id") && date.Field<int>("user_target_id") == line.Field<int>("user_target_id") && date.Field<DateTime>("date") == Convert.ToDateTime(line.Field<DateTime>("date")).Date.AddDays(sevenDays)
-                                   select date;
-            for (; nextWeek != null; sevenDays++)
+            using (SqlConnection sqlConnection = new SqlConnection(_formCoreGlobalObject.connectionString))
             {
-                timesList.Add(nextWeek.)
-            }
-             */
-            /*Dictionary<string, List<int>> arrayByDuration = new Dictionary<string,List<int>>();// dictionary for array of all pairs
-            foreach(User user in FCSOBG.userList.Keys){
+                sqlConnection.Open();// open connection
 
-            while(true){
-                var listOfUsers = from date in dt.AsEnumerable()
-                                  where date.Field<int>("user_source_id") == user.id || date.Field<int>("user_target_id") == user.id
-                                  select date;
-                foreach()
-            }
-            }*/
+                FileInfo file = new FileInfo("GraphByDateFillIn.sql");
+                string script = file.OpenText().ReadToEnd();
 
-            //}//foreach
-            //}// SELECT * FROM [GraphByDate]
-            //sqlConnection.Close();// close connection
-            //}// end of connection
-        }// end of backgroundWorkerTable_DoWork
+                using (SqlCommand GraphByDateFillIn = new SqlCommand(script, sqlConnection))//Empty table intervals
+                {
+                    try
+                    {
+                        GraphByDateFillIn.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Out.WriteAsync("\n\n+------------------+\n\nCannot GraphByDateFillIn\nException: " + ex.Message);
+                    }// if cannot delete table. Most likely table doesn't exist
+                }// TRUNCATE TABLE [GraphByDate]
+
+                sqlConnection.Close();// close connection
+            }// end of connection
+
+                /*
+                * Anomalies search
+                **/
+
+                //using (SqlConnection sqlConnection = new SqlConnection(_formCoreGlobalObject.connectionString))
+                //{
+                //sqlConnection.Open();// open connection
+                //using (SqlCommand readGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE [user_source_id] = @user_source_id;", sqlConnection))// First, read whole table [GraphByDate]
+                //{
+                //foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line
+                //{                        
+                /*int sevenDays = 7;// look for the day from the next week
+                var nextWeek = from date in dt.AsEnumerable()
+                                       where date.Field<int>("user_source_id") == line.Field<int>("user_source_id") && date.Field<int>("user_target_id") == line.Field<int>("user_target_id") && date.Field<DateTime>("date") == Convert.ToDateTime(line.Field<DateTime>("date")).Date.AddDays(sevenDays)
+                                       select date;
+                for (; nextWeek != null; sevenDays++)
+                {
+                    timesList.Add(nextWeek.)
+                }
+                 */
+                /*Dictionary<string, List<int>> arrayByDuration = new Dictionary<string,List<int>>();// dictionary for array of all pairs
+                foreach(User user in FCSOBG.userList.Keys){
+
+                while(true){
+                    var listOfUsers = from date in dt.AsEnumerable()
+                                      where date.Field<int>("user_source_id") == user.id || date.Field<int>("user_target_id") == user.id
+                                      select date;
+                    foreach()
+                }
+                }*/
+
+                //}//foreach
+                //}// SELECT * FROM [GraphByDate]
+                //sqlConnection.Close();// close connection
+                //}// end of connection
+            }// end of backgroundWorkerTable_DoWork
 
         private void buttonFind_Click(object sender, EventArgs e)
         {
