@@ -9,7 +9,7 @@ namespace PACS_Analyzer
 {
     [IgnoreFirst(1)]
     [IgnoreEmptyLines()]
-    [DelimitedRecord(";")]
+    [DelimitedRecord(",")]
     public sealed class CSVReader
     {
         [FieldTrim(TrimMode.Both)]
@@ -32,7 +32,7 @@ namespace PACS_Analyzer
 
         [FieldTrim(TrimMode.Both)]
         // Parse these dates: 2016-05-31 07:17:05
-        [FieldConverter(ConverterKind.Date, "dd.MM.yyyy HH:mm")]
+        [FieldConverter(ConverterKind.Date, "yyyy-MM-dd HH:mm:ss")]
         public DateTime timestamp;
 
         [FieldTrim(TrimMode.Both)]

@@ -16,12 +16,27 @@ using Microsoft.SqlServer.Server;
 
 namespace PACS_Analyzer
 {
+
+    /*
+     * 
+     * 
+     * По векторам:
+     * сделать запрос всех участников с их данными по встречам (встреча - этаж + зона через каждые 8 часов 
+     * 
+     * Обозначим за   весь период времени, представленный в логах (в нашем случае это 14 дней). Разбиваем весь период на множество равных интервалов t1, t2, t3, t4  и .д.
+Комментарий: хотелось бы иметь возможность задавать данный интервал в часах – 24 часа, 12 часов, 8 и т.д.
+        ). Будут вектора.
+
+     * По аномалиям: работать надо!!!
+     * 
+     * */
+
     public partial class MainForm : Form
     {
         /*
          * Global Variables
          */
-        FormCoreShare _formCoreGlobalObject = new FormCoreShare();// class for storing information between Core and Form
+    FormCoreShare _formCoreGlobalObject = new FormCoreShare();// class for storing information between Core and Form
         private static ManualResetEvent _waitThreads;// to wait untill all threads are done
         private static int _numerOfThreadsNotYetCompleted;// we don't use WaitHandle.WaitAll since we've got more than 64 threads
 
@@ -129,7 +144,7 @@ namespace PACS_Analyzer
             try
             {
                 interval = nextTimeLine.timestamp - line.timestamp;
-                intervalMinutes = interval.Minutes;// time difference (duration) in minutes
+                intervalMinutes = interval.Hours*60 + interval.Minutes;// time difference (duration) in minutes
             }// try
             catch (Exception e)// there is no FINISH time
             {
@@ -499,9 +514,12 @@ namespace PACS_Analyzer
                 MessageBox.Show("Cannot identify users \nFCSO.userList == null");
                 return;
             }
+            int iP = 0;
             foreach (KeyValuePair<User, int> userPair in _formCoreGlobalObject.userList)// add all users to ThreadPool to save files
             {
                 ThreadPool.QueueUserWorkItem(new WaitCallback(saveToFileByUser), userPair.Key);
+                progressBar3.Value = (iP * 100) / _formCoreGlobalObject.userList.Count();
+                iP++;
             }// foreach
         }// linkLabelGenerateGraphs_LinkClicked
 
@@ -531,7 +549,7 @@ namespace PACS_Analyzer
                             // Create the file.
                             using (FileStream fs = File.Create(path))
                             {
-                                Byte[] info = new UTF8Encoding(true).GetBytes("date (whole day); user1; user2; average duration (sec); times; floor-zone\n");
+                                Byte[] info = new UTF8Encoding(true).GetBytes("date (whole day); user1; user2; average duration (sec); times; floor;zone\n");
                                 // Add some information to the file.
                                 fs.Write(info, 0, info.Length);
 
@@ -539,7 +557,21 @@ namespace PACS_Analyzer
                                 foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line
                                 {
                                     average_duration = (Convert.ToInt32(line["duration"]) * 60) / Convert.ToInt32(line["times"]);
-                                    info = new UTF8Encoding(true).GetBytes(line["date"] + ";" + line["user_source_id"] + ";" + line["user_target_id"] + ";" + average_duration.ToString() + ";" + line["times"] + ";" + line["floor"] + "-" + line["zone"] + "\n");
+                                    info = new UTF8Encoding(true).GetBytes(
+                                        line["date"] 
+                                        + ";" 
+                                        +  _formCoreGlobalObject.userList.FirstOrDefault(x => x.Value == Convert.ToInt32(line["user_source_id"])).Key.empID
+                                        + ";" 
+                                        + _formCoreGlobalObject.userList.FirstOrDefault(x => x.Value == Convert.ToInt32(line["user_target_id"])).Key.empID
+                                        + ";" 
+                                        + average_duration.ToString() 
+                                        + ";" 
+                                        + line["times"] 
+                                        + ";" 
+                                        + line["floor"] 
+                                        + ";" 
+                                        + line["zone"] 
+                                        + "\n");
                                     // Add some information to the file.
                                     fs.Write(info, 0, info.Length);
 
@@ -588,6 +620,7 @@ namespace PACS_Analyzer
             labelTo.Visible = true;
             comboBoxFrom.Visible = true;
             comboBoxTill.Visible = true;
+            linkLabelGenerateGraphs.Visible = true;
 
             progressBarSteps.PerformStep();
         }// Browse the log file Button Click

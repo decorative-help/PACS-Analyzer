@@ -18,3 +18,7 @@ The development of the system for detecting anomalies in the behavior of employe
 ## Third-party
 
 * [Visual Studio Community](https://www.visualstudio.com/vs/community/)
+
+## Useful Links
+* [User List](https://github.com/uic-evl/EventEvent2016/blob/master/data/csv/Employee%20List.csv)
+* [Как думать на SQL? - Хабр](https://habrahabr.ru/post/305926/)

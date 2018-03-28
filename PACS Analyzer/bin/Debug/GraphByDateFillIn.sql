@@ -85,7 +85,7 @@ WHILE @parent_loop = 0
                                     AND [user_target_id] = @child_user_id ) 
                                OR ( [user_source_id] = @child_user_id 
                                     AND [user_target_id] = @parent_user_id ) 
-                                  AND [date] = @parent_start_time 
+                                  AND [date] = CONVERT(date, @parent_start_time) 
                                   AND [zone] = @parent_zone 
                                   AND [floor] = @parent_floor) 
               BEGIN -- line already exists, then UPDATE  
@@ -101,7 +101,7 @@ WHILE @parent_loop = 0
                                AND [user_target_id] = @child_user_id ) 
                           OR ( [user_source_id] = @child_user_id 
                                AND [user_target_id] = @parent_user_id ) 
-                             AND [date] = @parent_start_time 
+                             AND [date] = CONVERT(date, @parent_start_time)
                              AND [zone] = @parent_zone 
                              AND [floor] = @parent_floor 
                   ORDER  BY [date]
@@ -124,7 +124,7 @@ WHILE @parent_loop = 0
                                    AND [user_target_id] = @child_user_id ) 
                               OR ( [user_source_id] = @child_user_id 
                                    AND [user_target_id] = @parent_user_id ) 
-                                 AND [date] = @parent_start_time 
+                                 AND [date] = CONVERT(date, @parent_start_time)
                                  AND [zone] = @parent_zone 
                                  AND [floor] = @parent_floor 
                   END try 
@@ -147,14 +147,14 @@ WHILE @parent_loop = 0
 
                   BEGIN try-- try to INSERT  
                       INSERT INTO [graphbydate] 
-                                  (date, 
+                                  ([date], 
                                    user_source_id, 
                                    user_target_id, 
                                    duration, 
                                    times, 
                                    [zone], 
                                    [floor]) 
-                      VALUES      (@parent_start_time, 
+                      VALUES      (CONVERT(date, @parent_start_time), 
                                    @parent_user_id, 
                                    @child_user_id, 
                                    @minTimeDiff, 
