@@ -13,6 +13,7 @@ using System.IO;// for File
 using FileHelpers;// CSVReader
 using System.Data.SqlClient;// SQL Connection
 using Microsoft.SqlServer.Server;
+using System.Diagnostics;// Stop Watch
 
 namespace PACS_Analyzer
 {
@@ -36,9 +37,12 @@ namespace PACS_Analyzer
         /*
          * Global Variables
          */
-    FormCoreShare _formCoreGlobalObject = new FormCoreShare();// class for storing information between Core and Form
+        FormCoreShare _formCoreGlobalObject = new FormCoreShare();// class for storing information between Core and Form
         private static ManualResetEvent _waitThreads;// to wait untill all threads are done
         private static int _numerOfThreadsNotYetCompleted;// we don't use WaitHandle.WaitAll since we've got more than 64 threads
+        private string _vectorsSavedMessage = "Vectors have been saved to the folder";
+        private string _secondsLabel = " ms";
+        private Stopwatch _stopWatch = new Stopwatch();
 
         public MainForm()
         {
@@ -144,7 +148,7 @@ namespace PACS_Analyzer
             try
             {
                 interval = nextTimeLine.timestamp - line.timestamp;
-                intervalMinutes = interval.Hours*60 + interval.Minutes;// time difference (duration) in minutes
+                intervalMinutes = interval.Hours * 60 + interval.Minutes;// time difference (duration) in minutes
             }// try
             catch (Exception e)// there is no FINISH time
             {
@@ -387,7 +391,8 @@ namespace PACS_Analyzer
             _waitThreads.WaitOne();// Wait until the task is complete
 
             */
-
+            
+            backgroundWorkerTable.ReportProgress(100, new object[] { 2 });
             using (SqlConnection sqlConnection = new SqlConnection(_formCoreGlobalObject.connectionString))
             {
                 sqlConnection.Open();// open connection
@@ -410,45 +415,49 @@ namespace PACS_Analyzer
                 sqlConnection.Close();// close connection
             }// end of connection
 
-                /*
-                * Anomalies search
-                **/
+            /*
+            * Anomalies search
+            **/
 
-                //using (SqlConnection sqlConnection = new SqlConnection(_formCoreGlobalObject.connectionString))
-                //{
-                //sqlConnection.Open();// open connection
-                //using (SqlCommand readGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE [user_source_id] = @user_source_id;", sqlConnection))// First, read whole table [GraphByDate]
-                //{
-                //foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line
-                //{                        
-                /*int sevenDays = 7;// look for the day from the next week
-                var nextWeek = from date in dt.AsEnumerable()
-                                       where date.Field<int>("user_source_id") == line.Field<int>("user_source_id") && date.Field<int>("user_target_id") == line.Field<int>("user_target_id") && date.Field<DateTime>("date") == Convert.ToDateTime(line.Field<DateTime>("date")).Date.AddDays(sevenDays)
-                                       select date;
-                for (; nextWeek != null; sevenDays++)
-                {
-                    timesList.Add(nextWeek.)
-                }
-                 */
-                /*Dictionary<string, List<int>> arrayByDuration = new Dictionary<string,List<int>>();// dictionary for array of all pairs
-                foreach(User user in FCSOBG.userList.Keys){
+            //using (SqlConnection sqlConnection = new SqlConnection(_formCoreGlobalObject.connectionString))
+            //{
+            //sqlConnection.Open();// open connection
+            //using (SqlCommand readGraphByDate = new SqlCommand("SELECT * FROM [GraphByDate] WHERE [user_source_id] = @user_source_id;", sqlConnection))// First, read whole table [GraphByDate]
+            //{
+            //foreach (DataRow line in dt.Rows)// read [GraphByDate] line by line
+            //{                        
+            /*int sevenDays = 7;// look for the day from the next week
+            var nextWeek = from date in dt.AsEnumerable()
+                                   where date.Field<int>("user_source_id") == line.Field<int>("user_source_id") && date.Field<int>("user_target_id") == line.Field<int>("user_target_id") && date.Field<DateTime>("date") == Convert.ToDateTime(line.Field<DateTime>("date")).Date.AddDays(sevenDays)
+                                   select date;
+            for (; nextWeek != null; sevenDays++)
+            {
+                timesList.Add(nextWeek.)
+            }
+             */
+            /*Dictionary<string, List<int>> arrayByDuration = new Dictionary<string,List<int>>();// dictionary for array of all pairs
+            foreach(User user in FCSOBG.userList.Keys){
 
-                while(true){
-                    var listOfUsers = from date in dt.AsEnumerable()
-                                      where date.Field<int>("user_source_id") == user.id || date.Field<int>("user_target_id") == user.id
-                                      select date;
-                    foreach()
-                }
-                }*/
+            while(true){
+                var listOfUsers = from date in dt.AsEnumerable()
+                                  where date.Field<int>("user_source_id") == user.id || date.Field<int>("user_target_id") == user.id
+                                  select date;
+                foreach()
+            }
+            }*/
 
-                //}//foreach
-                //}// SELECT * FROM [GraphByDate]
-                //sqlConnection.Close();// close connection
-                //}// end of connection
-            }// end of backgroundWorkerTable_DoWork
+            //}//foreach
+            //}// SELECT * FROM [GraphByDate]
+            //sqlConnection.Close();// close connection
+            //}// end of connection
+        }// end of backgroundWorkerTable_DoWork
 
         private void buttonFind_Click(object sender, EventArgs e)
         {
+            _stopWatch.Reset();
+            _stopWatch.Start();// start time
+
+            this.Cursor = Cursors.WaitCursor;// Set wait cursor
             labelWorkinProgress.Visible = true;// Work in progress...
             if (Convert.ToDateTime(comboBoxTill.SelectedItem.ToString()).Subtract(Convert.ToDateTime(comboBoxFrom.SelectedItem.ToString())) <= TimeSpan.Zero)
             {
@@ -462,8 +471,11 @@ namespace PACS_Analyzer
             // prevent double launch of backgroundWorkerTable
             buttonFind.Enabled = false;
             progressBar1.Visible = true;
+            progressBar1.Value = 0;
             progressBar2.Visible = true;
+            progressBar2.Value = 0;
             progressBar3.Visible = true;
+            progressBar3.Value = 0;
 
             // run threads
             backgroundWorkerTable.RunWorkerAsync(_formCoreGlobalObject);
@@ -474,11 +486,16 @@ namespace PACS_Analyzer
 
         private void backgroundWorkerTable_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            _stopWatch.Stop();// stop time
+            labelDone.Visible = true;
+            labelDone.Text = _stopWatch.Elapsed.Milliseconds + _secondsLabel;
             buttonFind.Enabled = true;// prevent double launch of backgroundWorkerTable
             progressBar1.Visible = false;
             progressBar2.Visible = false;
             progressBar3.Visible = false;
             labelWorkinProgress.Visible = false;// Work in progress...
+            this.Cursor = Cursors.Default;// UNset wait cursor
+
             Console.Out.WriteLineAsync("backgroundWorkerTable - finished");
         }// end of backgroundWorkerTable_RunWorkerCompleted
 
@@ -508,6 +525,10 @@ namespace PACS_Analyzer
 
         private void linkLabelGenerateGraphs_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            _stopWatch.Reset();
+            _stopWatch.Start();// start time
+
+            this.Cursor = Cursors.WaitCursor;// Set wait cursor
             updateUserList();
             if (_formCoreGlobalObject.userList == null)
             {
@@ -515,12 +536,21 @@ namespace PACS_Analyzer
                 return;
             }
             int iP = 0;
+            progressBar3.Visible = true;
             foreach (KeyValuePair<User, int> userPair in _formCoreGlobalObject.userList)// add all users to ThreadPool to save files
             {
                 ThreadPool.QueueUserWorkItem(new WaitCallback(saveToFileByUser), userPair.Key);
                 progressBar3.Value = (iP * 100) / _formCoreGlobalObject.userList.Count();
                 iP++;
             }// foreach
+            progressBar3.Visible = false;
+            labelWorkinProgress.Text = _vectorsSavedMessage;
+            labelWorkinProgress.Visible = true;
+
+            _stopWatch.Stop();// stop time
+            labelDone.Visible = true;
+            labelDone.Text = _stopWatch.Elapsed.Milliseconds + _secondsLabel;
+            this.Cursor = Cursors.Default;// UNset wait cursor
         }// linkLabelGenerateGraphs_LinkClicked
 
         private void saveToFileByUser(object userObj)
@@ -541,7 +571,9 @@ namespace PACS_Analyzer
                         DataTable dt = new DataTable();
                         da.Fill(dt);// Put all data to DataTable formay
 
-                        string path = "users/" + user.id + "_user_" + user.lastName + "_" + user.firstName + ".txt";
+                        string dirPath = "users";
+                        System.IO.Directory.CreateDirectory(dirPath);
+                        string path = dirPath + '/' + user.id + "_user_" + user.lastName + "_" + user.firstName + ".txt";
                         try
                         {
                             if (File.Exists(path))
@@ -558,19 +590,19 @@ namespace PACS_Analyzer
                                 {
                                     average_duration = (Convert.ToInt32(line["duration"]) * 60) / Convert.ToInt32(line["times"]);
                                     info = new UTF8Encoding(true).GetBytes(
-                                        line["date"] 
-                                        + ";" 
-                                        +  _formCoreGlobalObject.userList.FirstOrDefault(x => x.Value == Convert.ToInt32(line["user_source_id"])).Key.empID
-                                        + ";" 
+                                        line["date"]
+                                        + ";"
+                                        + _formCoreGlobalObject.userList.FirstOrDefault(x => x.Value == Convert.ToInt32(line["user_source_id"])).Key.empID
+                                        + ";"
                                         + _formCoreGlobalObject.userList.FirstOrDefault(x => x.Value == Convert.ToInt32(line["user_target_id"])).Key.empID
-                                        + ";" 
-                                        + average_duration.ToString() 
-                                        + ";" 
-                                        + line["times"] 
-                                        + ";" 
-                                        + line["floor"] 
-                                        + ";" 
-                                        + line["zone"] 
+                                        + ";"
+                                        + average_duration.ToString()
+                                        + ";"
+                                        + line["times"]
+                                        + ";"
+                                        + line["floor"]
+                                        + ";"
+                                        + line["zone"]
                                         + "\n");
                                     // Add some information to the file.
                                     fs.Write(info, 0, info.Length);

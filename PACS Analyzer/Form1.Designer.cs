@@ -48,6 +48,7 @@
             this.labelWorkinProgress = new System.Windows.Forms.Label();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.progressBar3 = new System.Windows.Forms.ProgressBar();
+            this.labelDone = new System.Windows.Forms.Label();
             this.groupBoxSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.databaseMainDataSet1)).BeginInit();
             this.SuspendLayout();
@@ -241,7 +242,7 @@
             this.labelWorkinProgress.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelWorkinProgress.Location = new System.Drawing.Point(12, 362);
             this.labelWorkinProgress.Name = "labelWorkinProgress";
-            this.labelWorkinProgress.Size = new System.Drawing.Size(128, 19);
+            this.labelWorkinProgress.Size = new System.Drawing.Size(106, 19);
             this.labelWorkinProgress.TabIndex = 18;
             this.labelWorkinProgress.Text = "Work in progress...";
             this.labelWorkinProgress.Visible = false;
@@ -250,10 +251,13 @@
             // progressBar2
             // 
             this.progressBar2.BackColor = System.Drawing.Color.Gainsboro;
+            this.progressBar2.Cursor = System.Windows.Forms.Cursors.WaitCursor;
             this.progressBar2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(129)))), ((int)(((byte)(213)))), ((int)(((byte)(84)))));
             this.progressBar2.Location = new System.Drawing.Point(62, 383);
+            this.progressBar2.MarqueeAnimationSpeed = 50;
             this.progressBar2.Name = "progressBar2";
             this.progressBar2.Size = new System.Drawing.Size(91, 23);
+            this.progressBar2.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar2.TabIndex = 19;
             this.progressBar2.Visible = false;
             this.progressBar2.Click += new System.EventHandler(this.progressBar2_Click);
@@ -269,12 +273,24 @@
             this.progressBar3.Visible = false;
             this.progressBar3.Click += new System.EventHandler(this.progressBar3_Click);
             // 
+            // labelDone
+            // 
+            this.labelDone.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelDone.Location = new System.Drawing.Point(124, 362);
+            this.labelDone.Name = "labelDone";
+            this.labelDone.Size = new System.Drawing.Size(136, 19);
+            this.labelDone.TabIndex = 21;
+            this.labelDone.Text = "0.25 seconds";
+            this.labelDone.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.labelDone.Visible = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(236)))), ((int)(((byte)(236)))));
-            this.ClientSize = new System.Drawing.Size(272, 416);
+            this.ClientSize = new System.Drawing.Size(272, 415);
+            this.Controls.Add(this.labelDone);
             this.Controls.Add(this.progressBar3);
             this.Controls.Add(this.progressBar2);
             this.Controls.Add(this.labelWorkinProgress);
@@ -315,6 +331,7 @@
         private System.Windows.Forms.Label labelBar1;
         private System.Windows.Forms.Label labelHorizontalBar1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelDone;
     }
 }
 
