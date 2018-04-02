@@ -1,9 +1,12 @@
+## Download
+[Last Release](https://github.com/AlexeyVolkov/PACS-Analyzer/releases/tag/v0.5)
+
+[Source code](https://github.com/AlexeyVolkov/PACS-Analyzer/releases/tag/v0.5)
+
 # PACS Analyzer
 ##### _Physical Access Control System Analazyer_
 
 The development of the system for detecting anomalies in the behavior of employees based on Physical Access Control Systems data
-
-[Download Last Release](https://github.com/AlexeyVolkov/PACS-Analyzer/releases/tag/v0.5)
 
 ![Preview of PACS Analyzer main window](https://pp.userapi.com/c846221/v846221535/c1c7/YRxo_Glv6NI.jpg "PACS Analyzer main window")
 
