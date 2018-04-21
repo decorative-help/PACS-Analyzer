@@ -31,7 +31,7 @@ namespace PACS_Analyzer
         public int office;
 
         [FieldTrim(TrimMode.Both)]
-        // Parse these dates: 2016-05-31 07:17:05
+        // Parse these dates: 2016-05-31 07:29:35
         [FieldConverter(ConverterKind.Date, "yyyy-MM-dd HH:mm:ss")]
         public DateTime timestamp;
 

@@ -36,17 +36,15 @@ WHILE @parent_loop = 0
   BEGIN 
 
   /*
-  Попросить у этой данные тестовые нормальные, тип для пятерых человек.
-  Иначе оооочень муторно всё это обрабатывать и искать ничего
+
+select AVG(duration) AS 'duration', AVG(times) as 'times'
+from GraphByDate
+where user_source_id = 2 OR user_target_id = 2
+group by [floor], [zone]
 
 
-  Нам нужно искать аномалии во встречах пользователя 1 и 2, а у нас есть записи максимум трёх дней их встреч
-  это крайне мало
 
 
 
-
-SELECT
-	*
-FROM [graphbydate]
-WHERE [duration] > AVG([duration])
+Надо вообще свой лог сделать, потому что ладно три дня обрабатывается, но у них и встреча одна...(
+Надо самому и сделать

@@ -30,6 +30,11 @@ namespace PACS_Analyzer
 
      * По аномалиям: работать надо!!!
      * 
+     * 
+     * 
+     * В графах нет одинаковых встреч вообще
+     * Хотя в интервалах есть
+     * Нужно глянуть, вдруг есть условия незаписи
      * */
 
     public partial class MainForm : Form
@@ -69,6 +74,7 @@ namespace PACS_Analyzer
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Cannot open the file error!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
             progressBarSteps.Visible = true;
             _waitThreads = new ManualResetEvent(false);

@@ -1,0 +1,1 @@
+date (whole day); user1; user2; average duration (sec); times; floor;zone

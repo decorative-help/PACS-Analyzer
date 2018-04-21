@@ -77,19 +77,21 @@ WHILE @parent_loop = 0
 
       WHILE @child_loop = 0 -- read [intervals]Child line by line   
         BEGIN -- for each user who has been there  
-            -- CHILD - FINISH  
+            -- CHILD - FINISH
             IF EXISTS (SELECT * 
                        FROM   [graphbydate] 
                        WHERE  [user_source_id] <> [user_target_id] 
-                              AND ( [user_source_id] = @parent_user_id 
+                              AND (
+								([user_source_id] = @parent_user_id 
                                     AND [user_target_id] = @child_user_id ) 
-                               OR ( [user_source_id] = @child_user_id 
-                                    AND [user_target_id] = @parent_user_id ) 
+								OR ( [user_source_id] = @child_user_id 
+                                    AND [user_target_id] = @parent_user_id )
+								)
                                   AND [date] = CONVERT(date, @parent_start_time) 
                                   AND [zone] = @parent_zone 
                                   AND [floor] = @parent_floor) 
               BEGIN -- line already exists, then UPDATE  
-                  -- retrieve data for next INSERT || UPDATE queries first  
+                  -- retrieve data for next INSERT || UPDATE queries first
                   DECLARE @graph_duration INT, 
                           @graph_times    INT 
 
@@ -97,10 +99,12 @@ WHILE @parent_loop = 0
                          @graph_times = times 
                   FROM   [graphbydate] 
                   WHERE  [user_source_id] <> [user_target_id] 
-                         AND ( [user_source_id] = @parent_user_id 
-                               AND [user_target_id] = @child_user_id ) 
-                          OR ( [user_source_id] = @child_user_id 
-                               AND [user_target_id] = @parent_user_id ) 
+                         AND (
+								([user_source_id] = @parent_user_id 
+                                    AND [user_target_id] = @child_user_id ) 
+								OR ( [user_source_id] = @child_user_id 
+                                    AND [user_target_id] = @parent_user_id )
+								) 
                              AND [date] = CONVERT(date, @parent_start_time)
                              AND [zone] = @parent_zone 
                              AND [floor] = @parent_floor 
@@ -120,10 +124,12 @@ WHILE @parent_loop = 0
                                           + @minTimeDiff, 
                              [times] = @graph_times + 1 
                       WHERE  [user_source_id] <> [user_target_id] 
-                             AND ( [user_source_id] = @parent_user_id 
-                                   AND [user_target_id] = @child_user_id ) 
-                              OR ( [user_source_id] = @child_user_id 
-                                   AND [user_target_id] = @parent_user_id ) 
+                             AND (
+								([user_source_id] = @parent_user_id 
+                                    AND [user_target_id] = @child_user_id ) 
+								OR ( [user_source_id] = @child_user_id 
+                                    AND [user_target_id] = @parent_user_id )
+								)
                                  AND [date] = CONVERT(date, @parent_start_time)
                                  AND [zone] = @parent_zone 
                                  AND [floor] = @parent_floor 
@@ -145,7 +151,8 @@ WHILE @parent_loop = 0
                     SET @minTimeDiff = Datediff(minute, @child_start_time, 
                                        @parent_end_time) 
 
-                  BEGIN try-- try to INSERT  
+                  BEGIN try-- try to INSERT  				  
+			SET @numberOfLines = @numberOfLines + 1
                       INSERT INTO [graphbydate] 
                                   ([date], 
                                    user_source_id, 
@@ -198,8 +205,6 @@ WHILE @parent_loop = 0
       SET @parent_loop = @@FETCH_STATUS 
   -- ЗАВЕРШЕНИЕ ЛОГИКИ ВНУТРИ ЦИКЛА  
   END 
-
-SELECT @parent_COUNTER AS FINAL_COUNT 
 
 -- ЗАКРЫВАЕМ КУРСОР  
 CLOSE parent_table_cursor 
