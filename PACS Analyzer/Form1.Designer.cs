@@ -49,6 +49,8 @@
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.progressBar3 = new System.Windows.Forms.ProgressBar();
             this.labelDone = new System.Windows.Forms.Label();
+            this.linkLabelSaveAnomalies = new System.Windows.Forms.LinkLabel();
+            this.labelDelimeter = new System.Windows.Forms.Label();
             this.groupBoxSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.databaseMainDataSet1)).BeginInit();
             this.SuspendLayout();
@@ -56,6 +58,8 @@
             // groupBoxSettings
             // 
             this.groupBoxSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(227)))), ((int)(((byte)(227)))));
+            this.groupBoxSettings.Controls.Add(this.labelDelimeter);
+            this.groupBoxSettings.Controls.Add(this.linkLabelSaveAnomalies);
             this.groupBoxSettings.Controls.Add(this.label1);
             this.groupBoxSettings.Controls.Add(this.labelBar1);
             this.groupBoxSettings.Controls.Add(this.labelHorizontalBar1);
@@ -155,10 +159,10 @@
             this.linkLabelGenerateGraphs.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(187)))));
             this.linkLabelGenerateGraphs.Location = new System.Drawing.Point(6, 314);
             this.linkLabelGenerateGraphs.Name = "linkLabelGenerateGraphs";
-            this.linkLabelGenerateGraphs.Size = new System.Drawing.Size(119, 15);
+            this.linkLabelGenerateGraphs.Size = new System.Drawing.Size(92, 16);
             this.linkLabelGenerateGraphs.TabIndex = 14;
             this.linkLabelGenerateGraphs.TabStop = true;
-            this.linkLabelGenerateGraphs.Text = "Generate Vectors";
+            this.linkLabelGenerateGraphs.Text = "Save Vectors";
             this.linkLabelGenerateGraphs.Visible = false;
             this.linkLabelGenerateGraphs.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelGenerateGraphs_LinkClicked);
             // 
@@ -284,6 +288,29 @@
             this.labelDone.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.labelDone.Visible = false;
             // 
+            // linkLabelSaveAnomalies
+            // 
+            this.linkLabelSaveAnomalies.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLabelSaveAnomalies.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(187)))));
+            this.linkLabelSaveAnomalies.Location = new System.Drawing.Point(123, 314);
+            this.linkLabelSaveAnomalies.Name = "linkLabelSaveAnomalies";
+            this.linkLabelSaveAnomalies.Size = new System.Drawing.Size(119, 15);
+            this.linkLabelSaveAnomalies.TabIndex = 24;
+            this.linkLabelSaveAnomalies.TabStop = true;
+            this.linkLabelSaveAnomalies.Text = "Save Anomalies";
+            this.linkLabelSaveAnomalies.Visible = false;
+            this.linkLabelSaveAnomalies.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSaveAnomalies_LinkClicked);
+            // 
+            // labelDelimeter
+            // 
+            this.labelDelimeter.AutoSize = true;
+            this.labelDelimeter.Location = new System.Drawing.Point(104, 311);
+            this.labelDelimeter.Name = "labelDelimeter";
+            this.labelDelimeter.Size = new System.Drawing.Size(13, 19);
+            this.labelDelimeter.TabIndex = 22;
+            this.labelDelimeter.Text = "|";
+            this.labelDelimeter.Visible = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 23F);
@@ -332,6 +359,8 @@
         private System.Windows.Forms.Label labelHorizontalBar1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelDone;
+        private System.Windows.Forms.Label labelDelimeter;
+        private System.Windows.Forms.LinkLabel linkLabelSaveAnomalies;
     }
 }
 

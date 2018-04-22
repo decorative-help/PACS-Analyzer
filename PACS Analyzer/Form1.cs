@@ -18,24 +18,6 @@ using System.Diagnostics;// Stop Watch
 namespace PACS_Analyzer
 {
 
-    /*
-     * 
-     * 
-     * По векторам:
-     * сделать запрос всех участников с их данными по встречам (встреча - этаж + зона через каждые 8 часов 
-     * 
-     * Обозначим за   весь период времени, представленный в логах (в нашем случае это 14 дней). Разбиваем весь период на множество равных интервалов t1, t2, t3, t4  и .д.
-Комментарий: хотелось бы иметь возможность задавать данный интервал в часах – 24 часа, 12 часов, 8 и т.д.
-        ). Будут вектора.
-
-     * По аномалиям: работать надо!!!
-     * 
-     * 
-     * 
-     * В графах нет одинаковых встреч вообще
-     * Хотя в интервалах есть
-     * Нужно глянуть, вдруг есть условия незаписи
-     * */
 
     public partial class MainForm : Form
     {
@@ -45,7 +27,10 @@ namespace PACS_Analyzer
         FormCoreShare _formCoreGlobalObject = new FormCoreShare();// class for storing information between Core and Form
         private static ManualResetEvent _waitThreads;// to wait untill all threads are done
         private static int _numerOfThreadsNotYetCompleted;// we don't use WaitHandle.WaitAll since we've got more than 64 threads
-        private string _vectorsSavedMessage = "Vectors have been saved to the folder";
+        private static string _vectorsFolder = "users";
+        private string _vectorsSavedMessage = "Vectors have been saved to the folder /"+ _vectorsFolder + "/";
+        private static string _anomaliesFolder = "anomalies";
+        private string _anomaliesSavedMessage = "Anomalies have been saved to the folder /" + _anomaliesFolder + "/";
         private string _secondsLabel = " ms";
         private Stopwatch _stopWatch = new Stopwatch();
 
@@ -397,7 +382,7 @@ namespace PACS_Analyzer
             _waitThreads.WaitOne();// Wait until the task is complete
 
             */
-            
+
             backgroundWorkerTable.ReportProgress(100, new object[] { 2 });
             using (SqlConnection sqlConnection = new SqlConnection(_formCoreGlobalObject.connectionString))
             {
@@ -424,6 +409,31 @@ namespace PACS_Analyzer
             /*
             * Anomalies search
             **/
+
+
+            using (SqlConnection sqlConnection = new SqlConnection(_formCoreGlobalObject.connectionString))
+            {
+                sqlConnection.Open();// open connection
+
+                FileInfo file = new FileInfo("Anomalies.sql");
+                string script = file.OpenText().ReadToEnd();
+
+                using (SqlCommand Anomalies = new SqlCommand(script, sqlConnection))//Empty table intervals
+                {
+                    try
+                    {
+                        Anomalies.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Out.WriteAsync("\n\n+------------------+\n\nCannot Anomalies\nException: " + ex.Message);
+                    }// if cannot delete table. Most likely table doesn't exist
+                }// 
+
+                sqlConnection.Close();// close connection
+            }// end of connection
+
+
 
             //using (SqlConnection sqlConnection = new SqlConnection(_formCoreGlobalObject.connectionString))
             //{
@@ -625,7 +635,7 @@ namespace PACS_Analyzer
 
                     sqlConnection.Close();// close connection
                 }// end of connection
-            }// if
+            }// if userObj==null
         }// getUserList
 
         private void bindingSource1_CurrentChanged(object sender, EventArgs e)
@@ -659,6 +669,8 @@ namespace PACS_Analyzer
             comboBoxFrom.Visible = true;
             comboBoxTill.Visible = true;
             linkLabelGenerateGraphs.Visible = true;
+            linkLabelSaveAnomalies.Visible = true;
+            labelDelimeter.Visible = true;
 
             progressBarSteps.PerformStep();
         }// Browse the log file Button Click
@@ -726,6 +738,96 @@ namespace PACS_Analyzer
 
         private void progressBar3_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void linkLabelSaveAnomalies_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            _stopWatch.Reset();
+            _stopWatch.Start();// start time
+
+            this.Cursor = Cursors.WaitCursor;// Set wait cursor
+            updateUserList();
+            if (_formCoreGlobalObject.userList == null)
+            {
+                MessageBox.Show("Cannot identify users \nFCSO.userList == null");
+                return;
+            }
+            int iP = 0;
+            progressBar3.Visible = true;
+
+            using (SqlConnection sqlConnection = new SqlConnection(_formCoreGlobalObject.connectionString))
+            {
+                sqlConnection.Open();// open connection
+
+                using (SqlCommand readAnomalies = new SqlCommand("SELECT * FROM [AnomaliesTEMP];", sqlConnection))// First, read whole table [AnomaliesTEMP]
+                {
+                    SqlDataAdapter da = new SqlDataAdapter(readAnomalies);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);// Put all data to DataTable formay
+
+                    System.IO.Directory.CreateDirectory(_anomaliesFolder);
+                    string path = _anomaliesFolder + '/' + "anomalies" + ".txt";
+                    try
+                    {
+                        if (File.Exists(path))
+                            File.Delete(path);
+                        // Create the file.
+                        using (FileStream fs = File.Create(path))
+                        {
+                            Byte[] info = new UTF8Encoding(true).GetBytes("date (whole day); user1; user2; odd duration (sec); average duration (sec); odd times; average times (sec); floor;zone\n");
+                            // Add some information to the file.
+                            fs.Write(info, 0, info.Length);
+
+                            int odd_duration = 0;
+                            int average_duration = 0;
+                            foreach (DataRow line in dt.Rows)// read [AnomaliesTEMP] line by line
+                            {
+                                odd_duration = (Convert.ToInt32(line["duration"]) * 60) / Convert.ToInt32(line["times"]);
+                                //average_duration = (Convert.ToInt32(line["duration_AVG"]) * 60) / Convert.ToInt32(line["times"]);
+                                info = new UTF8Encoding(true).GetBytes(
+                                    line["date"]
+                                    + ";"
+                                    + _formCoreGlobalObject.userList.FirstOrDefault(x => x.Value == Convert.ToInt32(line["user_source_id"])).Key.empID
+                                    + ";"
+                                    + _formCoreGlobalObject.userList.FirstOrDefault(x => x.Value == Convert.ToInt32(line["user_target_id"])).Key.empID
+                                    + ";"
+                                    + odd_duration.ToString()
+                                    + ";"
+                                    + "0"
+                                    + ";"
+                                    + line["times"]
+                                    + ";"
+                                    + line["times_AVG"]
+                                    + ";"
+                                    + line["floor"]
+                                    + ";"
+                                    + line["zone"]
+                                    + "\n");
+                                // Add some information to the file.
+                                fs.Write(info, 0, info.Length);
+
+                            }//foreach
+                        }// using
+                    }// try
+
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }// SELECT * FROM [AnomaliesTEMP]
+
+                sqlConnection.Close();// close connection
+            }// end of connection
+
+            progressBar3.Visible = false;
+            labelWorkinProgress.Text = _vectorsSavedMessage;
+            labelWorkinProgress.Visible = true;
+
+            _stopWatch.Stop();// stop time
+            labelDone.Visible = true;
+            labelDone.Text = _stopWatch.Elapsed.Milliseconds + _secondsLabel;
+            this.Cursor = Cursors.Default;// UNset wait cursor
 
         }
     }// end of class MainForm : Form
