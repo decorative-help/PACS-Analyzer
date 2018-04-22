@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.groupBoxSettings = new System.Windows.Forms.GroupBox();
+            this.labelDelimeter = new System.Windows.Forms.Label();
+            this.linkLabelSaveAnomalies = new System.Windows.Forms.LinkLabel();
             this.label1 = new System.Windows.Forms.Label();
             this.labelBar1 = new System.Windows.Forms.Label();
             this.labelHorizontalBar1 = new System.Windows.Forms.Label();
@@ -45,19 +47,18 @@
             this.openFileDialogChooseFile = new System.Windows.Forms.OpenFileDialog();
             this.backgroundWorkerTable = new System.ComponentModel.BackgroundWorker();
             this.databaseMainDataSet1 = new PACS_Analyzer.DatabaseMainDataSet();
-            this.labelWorkinProgress = new System.Windows.Forms.Label();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.progressBar3 = new System.Windows.Forms.ProgressBar();
-            this.labelDone = new System.Windows.Forms.Label();
-            this.linkLabelSaveAnomalies = new System.Windows.Forms.LinkLabel();
-            this.labelDelimeter = new System.Windows.Forms.Label();
+            this.richTextBoxInfo = new System.Windows.Forms.RichTextBox();
+            this.labelInfoText = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBoxSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.databaseMainDataSet1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBoxSettings
             // 
-            this.groupBoxSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(227)))), ((int)(((byte)(227)))));
+            this.groupBoxSettings.BackColor = System.Drawing.Color.White;
             this.groupBoxSettings.Controls.Add(this.labelDelimeter);
             this.groupBoxSettings.Controls.Add(this.linkLabelSaveAnomalies);
             this.groupBoxSettings.Controls.Add(this.label1);
@@ -75,10 +76,34 @@
             this.groupBoxSettings.ForeColor = System.Drawing.Color.Black;
             this.groupBoxSettings.Location = new System.Drawing.Point(12, 12);
             this.groupBoxSettings.Name = "groupBoxSettings";
-            this.groupBoxSettings.Size = new System.Drawing.Size(248, 343);
+            this.groupBoxSettings.Size = new System.Drawing.Size(248, 348);
             this.groupBoxSettings.TabIndex = 2;
             this.groupBoxSettings.TabStop = false;
             this.groupBoxSettings.Enter += new System.EventHandler(this.groupBoxSettings_Enter);
+            // 
+            // labelDelimeter
+            // 
+            this.labelDelimeter.AutoSize = true;
+            this.labelDelimeter.Location = new System.Drawing.Point(114, 316);
+            this.labelDelimeter.Name = "labelDelimeter";
+            this.labelDelimeter.Size = new System.Drawing.Size(13, 19);
+            this.labelDelimeter.TabIndex = 22;
+            this.labelDelimeter.Text = "|";
+            this.labelDelimeter.Visible = false;
+            // 
+            // linkLabelSaveAnomalies
+            // 
+            this.linkLabelSaveAnomalies.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLabelSaveAnomalies.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(187)))));
+            this.linkLabelSaveAnomalies.Location = new System.Drawing.Point(123, 319);
+            this.linkLabelSaveAnomalies.Name = "linkLabelSaveAnomalies";
+            this.linkLabelSaveAnomalies.Size = new System.Drawing.Size(119, 15);
+            this.linkLabelSaveAnomalies.TabIndex = 24;
+            this.linkLabelSaveAnomalies.TabStop = true;
+            this.linkLabelSaveAnomalies.Text = "Save Anomalies";
+            this.linkLabelSaveAnomalies.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.linkLabelSaveAnomalies.Visible = false;
+            this.linkLabelSaveAnomalies.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSaveAnomalies_LinkClicked);
             // 
             // label1
             // 
@@ -157,12 +182,13 @@
             // 
             this.linkLabelGenerateGraphs.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.linkLabelGenerateGraphs.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(187)))));
-            this.linkLabelGenerateGraphs.Location = new System.Drawing.Point(6, 314);
+            this.linkLabelGenerateGraphs.Location = new System.Drawing.Point(6, 318);
             this.linkLabelGenerateGraphs.Name = "linkLabelGenerateGraphs";
-            this.linkLabelGenerateGraphs.Size = new System.Drawing.Size(92, 16);
+            this.linkLabelGenerateGraphs.Size = new System.Drawing.Size(111, 16);
             this.linkLabelGenerateGraphs.TabIndex = 14;
             this.linkLabelGenerateGraphs.TabStop = true;
             this.linkLabelGenerateGraphs.Text = "Save Vectors";
+            this.linkLabelGenerateGraphs.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.linkLabelGenerateGraphs.Visible = false;
             this.linkLabelGenerateGraphs.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelGenerateGraphs_LinkClicked);
             // 
@@ -201,6 +227,7 @@
             // 
             // comboBoxFrom
             // 
+            this.comboBoxFrom.BackColor = System.Drawing.Color.White;
             this.comboBoxFrom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxFrom.Enabled = false;
             this.comboBoxFrom.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -216,7 +243,7 @@
             // 
             this.progressBar1.BackColor = System.Drawing.Color.Gainsboro;
             this.progressBar1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(129)))), ((int)(((byte)(213)))), ((int)(((byte)(84)))));
-            this.progressBar1.Location = new System.Drawing.Point(12, 383);
+            this.progressBar1.Location = new System.Drawing.Point(12, 417);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(44, 23);
             this.progressBar1.TabIndex = 8;
@@ -241,23 +268,12 @@
             this.databaseMainDataSet1.DataSetName = "DatabaseMainDataSet";
             this.databaseMainDataSet1.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
-            // labelWorkinProgress
-            // 
-            this.labelWorkinProgress.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.labelWorkinProgress.Location = new System.Drawing.Point(12, 362);
-            this.labelWorkinProgress.Name = "labelWorkinProgress";
-            this.labelWorkinProgress.Size = new System.Drawing.Size(106, 19);
-            this.labelWorkinProgress.TabIndex = 18;
-            this.labelWorkinProgress.Text = "Work in progress...";
-            this.labelWorkinProgress.Visible = false;
-            this.labelWorkinProgress.Click += new System.EventHandler(this.labelWorkinProgress_Click);
-            // 
             // progressBar2
             // 
             this.progressBar2.BackColor = System.Drawing.Color.Gainsboro;
             this.progressBar2.Cursor = System.Windows.Forms.Cursors.WaitCursor;
             this.progressBar2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(129)))), ((int)(((byte)(213)))), ((int)(((byte)(84)))));
-            this.progressBar2.Location = new System.Drawing.Point(62, 383);
+            this.progressBar2.Location = new System.Drawing.Point(62, 417);
             this.progressBar2.MarqueeAnimationSpeed = 50;
             this.progressBar2.Name = "progressBar2";
             this.progressBar2.Size = new System.Drawing.Size(91, 23);
@@ -270,57 +286,57 @@
             // 
             this.progressBar3.BackColor = System.Drawing.Color.Gainsboro;
             this.progressBar3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(129)))), ((int)(((byte)(213)))), ((int)(((byte)(84)))));
-            this.progressBar3.Location = new System.Drawing.Point(159, 383);
+            this.progressBar3.Location = new System.Drawing.Point(159, 417);
             this.progressBar3.Name = "progressBar3";
             this.progressBar3.Size = new System.Drawing.Size(101, 23);
             this.progressBar3.TabIndex = 20;
             this.progressBar3.Visible = false;
             this.progressBar3.Click += new System.EventHandler(this.progressBar3_Click);
             // 
-            // labelDone
+            // richTextBoxInfo
             // 
-            this.labelDone.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.labelDone.Location = new System.Drawing.Point(124, 362);
-            this.labelDone.Name = "labelDone";
-            this.labelDone.Size = new System.Drawing.Size(136, 19);
-            this.labelDone.TabIndex = 21;
-            this.labelDone.Text = "0.25 seconds";
-            this.labelDone.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.labelDone.Visible = false;
+            this.richTextBoxInfo.BackColor = System.Drawing.SystemColors.Control;
+            this.richTextBoxInfo.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Italic);
+            this.richTextBoxInfo.Location = new System.Drawing.Point(12, 382);
+            this.richTextBoxInfo.Name = "richTextBoxInfo";
+            this.richTextBoxInfo.ReadOnly = true;
+            this.richTextBoxInfo.Size = new System.Drawing.Size(176, 29);
+            this.richTextBoxInfo.TabIndex = 22;
+            this.richTextBoxInfo.Text = "Work in progress...";
             // 
-            // linkLabelSaveAnomalies
+            // labelInfoText
             // 
-            this.linkLabelSaveAnomalies.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabelSaveAnomalies.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(187)))));
-            this.linkLabelSaveAnomalies.Location = new System.Drawing.Point(123, 314);
-            this.linkLabelSaveAnomalies.Name = "linkLabelSaveAnomalies";
-            this.linkLabelSaveAnomalies.Size = new System.Drawing.Size(119, 15);
-            this.linkLabelSaveAnomalies.TabIndex = 24;
-            this.linkLabelSaveAnomalies.TabStop = true;
-            this.linkLabelSaveAnomalies.Text = "Save Anomalies";
-            this.linkLabelSaveAnomalies.Visible = false;
-            this.linkLabelSaveAnomalies.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSaveAnomalies_LinkClicked);
+            this.labelInfoText.Font = new System.Drawing.Font("Lucida Sans", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelInfoText.Location = new System.Drawing.Point(12, 364);
+            this.labelInfoText.Name = "labelInfoText";
+            this.labelInfoText.Size = new System.Drawing.Size(127, 15);
+            this.labelInfoText.TabIndex = 23;
+            this.labelInfoText.Text = "Information:";
             // 
-            // labelDelimeter
+            // button1
             // 
-            this.labelDelimeter.AutoSize = true;
-            this.labelDelimeter.Location = new System.Drawing.Point(104, 311);
-            this.labelDelimeter.Name = "labelDelimeter";
-            this.labelDelimeter.Size = new System.Drawing.Size(13, 19);
-            this.labelDelimeter.TabIndex = 22;
-            this.labelDelimeter.Text = "|";
-            this.labelDelimeter.Visible = false;
+            this.button1.FlatAppearance.BorderColor = System.Drawing.SystemColors.GrayText;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("Lucida Sans", 9.75F);
+            this.button1.Location = new System.Drawing.Point(194, 382);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(66, 29);
+            this.button1.TabIndex = 24;
+            this.button1.Text = "Enlarge";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(236)))), ((int)(((byte)(236)))));
-            this.ClientSize = new System.Drawing.Size(272, 415);
-            this.Controls.Add(this.labelDone);
+            this.ClientSize = new System.Drawing.Size(272, 446);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.labelInfoText);
+            this.Controls.Add(this.richTextBoxInfo);
             this.Controls.Add(this.progressBar3);
             this.Controls.Add(this.progressBar2);
-            this.Controls.Add(this.labelWorkinProgress);
             this.Controls.Add(this.groupBoxSettings);
             this.Controls.Add(this.progressBar1);
             this.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -350,7 +366,6 @@
         private System.Windows.Forms.Label labelTo;
         private System.Windows.Forms.Label labelFrom;
         private DatabaseMainDataSet databaseMainDataSet1;
-        private System.Windows.Forms.Label labelWorkinProgress;
         private System.Windows.Forms.ProgressBar progressBar2;
         private System.Windows.Forms.ProgressBar progressBar3;
         private System.Windows.Forms.Button buttonBrowse;
@@ -358,9 +373,11 @@
         private System.Windows.Forms.Label labelBar1;
         private System.Windows.Forms.Label labelHorizontalBar1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label labelDone;
         private System.Windows.Forms.Label labelDelimeter;
         private System.Windows.Forms.LinkLabel linkLabelSaveAnomalies;
+        private System.Windows.Forms.RichTextBox richTextBoxInfo;
+        private System.Windows.Forms.Label labelInfoText;
+        private System.Windows.Forms.Button button1;
     }
 }
 

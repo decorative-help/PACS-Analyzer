@@ -28,10 +28,13 @@ namespace PACS_Analyzer
         private static ManualResetEvent _waitThreads;// to wait untill all threads are done
         private static int _numerOfThreadsNotYetCompleted;// we don't use WaitHandle.WaitAll since we've got more than 64 threads
         private static string _vectorsFolder = "users";
-        private string _vectorsSavedMessage = "Vectors have been saved to the folder /"+ _vectorsFolder + "/";
+        private string _vectorsSavedMessage = "Vectors have been saved to the folder /" + _vectorsFolder + "/";
         private static string _anomaliesFolder = "anomalies";
         private string _anomaliesSavedMessage = "Anomalies have been saved to the folder /" + _anomaliesFolder + "/";
+        private string _anomaliesFound = "Anomalies were found in";
         private string _secondsLabel = " ms";
+        private string _workInProgress = "Work in progress...";
+        private string _infoText = "[1] Click the button (Browse the log file...)\nPick the file Example.csv from the folder with a project\n[2] Choose time gap with two drop-down date lists\n[3] Click (Find anomalies) to start the main algorithm\n[4] You may watch the progress below (it may take time to analyze big files)";
         private Stopwatch _stopWatch = new Stopwatch();
 
         public MainForm()
@@ -47,6 +50,7 @@ namespace PACS_Analyzer
             progressBarSteps.Maximum = 3;// Number of steps on the form
             progressBarSteps.Value = 0;// Set the initial value of the ProgressBar
             progressBarSteps.Step = 1;// Set the Step value
+            richTextBoxInfo.Text = _infoText;
         }
 
         private void openFileDialogChooseFile_FileOk(object sender, CancelEventArgs e)
@@ -78,7 +82,8 @@ namespace PACS_Analyzer
             }
             catch (Exception e)
             {
-                MessageBox.Show("Cannot find the file:\n" + _formCoreGlobalObject.filePath + "\n\n" + e.Message);
+                MessageBox.Show("Cannot find the file:\n" + _formCoreGlobalObject.filePath + "\n\n" + e.Message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _waitThreads.Set();// Signal that work is finished
                 return;
             }
             _formCoreGlobalObject.fileLinesNumber = result.Length;
@@ -99,10 +104,19 @@ namespace PACS_Analyzer
             _waitThreads.Set();// Signal that work is finished
         }// Look through all file and update User list
 
-        private void updateDateGap()
+        private bool updateDateGap()
         {
             var engine = new FileHelperEngine<CSVReader>();
-            var result = engine.ReadFile(_formCoreGlobalObject.filePath);// read the file
+            CSVReader[] result = new CSVReader[0];
+            try
+            {
+                result = engine.ReadFile(_formCoreGlobalObject.filePath);// read the file
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Cannot find the file:\n" + _formCoreGlobalObject.filePath + "\n\n" + e.Message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
             _formCoreGlobalObject.fileLinesNumber = result.Length;
             _formCoreGlobalObject.comboBoxTimes = new List<DateTime>();
 
@@ -111,6 +125,8 @@ namespace PACS_Analyzer
                 _formCoreGlobalObject.comboBoxTimes.Add(result[i].timestamp);
             }
             _formCoreGlobalObject.comboBoxTimes.Add(result[_formCoreGlobalObject.fileLinesNumber - 2].timestamp);// add dates to MainForm
+
+            return true;
         }// updateDateGap (from openFileDialogChooseFile_FileOk)
 
         private void fillInIntervals(object x)
@@ -473,11 +489,9 @@ namespace PACS_Analyzer
             _stopWatch.Reset();
             _stopWatch.Start();// start time
 
-            this.Cursor = Cursors.WaitCursor;// Set wait cursor
-            labelWorkinProgress.Visible = true;// Work in progress...
             if (Convert.ToDateTime(comboBoxTill.SelectedItem.ToString()).Subtract(Convert.ToDateTime(comboBoxFrom.SelectedItem.ToString())) <= TimeSpan.Zero)
             {
-                MessageBox.Show("Please make sure that your chosen left date is earlier than the right one", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please make sure that your \n`" + labelFrom.Text + "`\nis earlier than\n`" + labelTo.Text + "`", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             // get dates from date pickers on the form
@@ -493,6 +507,9 @@ namespace PACS_Analyzer
             progressBar3.Visible = true;
             progressBar3.Value = 0;
 
+            this.Cursor = Cursors.WaitCursor;// Set wait cursor
+            richTextBoxInfo.Visible = true;// Work in progress...
+            richTextBoxInfo.Text = _workInProgress;
             // run threads
             backgroundWorkerTable.RunWorkerAsync(_formCoreGlobalObject);
             Console.Out.WriteLineAsync("backgroundWorkerTable - started");
@@ -503,13 +520,11 @@ namespace PACS_Analyzer
         private void backgroundWorkerTable_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             _stopWatch.Stop();// stop time
-            labelDone.Visible = true;
-            labelDone.Text = _stopWatch.Elapsed.Milliseconds + _secondsLabel;
             buttonFind.Enabled = true;// prevent double launch of backgroundWorkerTable
             progressBar1.Visible = false;
             progressBar2.Visible = false;
             progressBar3.Visible = false;
-            labelWorkinProgress.Visible = false;// Work in progress...
+            richTextBoxInfo.Text = _anomaliesFound + " " + _stopWatch.Elapsed.Milliseconds + _secondsLabel;// Work in progress...
             this.Cursor = Cursors.Default;// UNset wait cursor
 
             Console.Out.WriteLineAsync("backgroundWorkerTable - finished");
@@ -560,12 +575,10 @@ namespace PACS_Analyzer
                 iP++;
             }// foreach
             progressBar3.Visible = false;
-            labelWorkinProgress.Text = _vectorsSavedMessage;
-            labelWorkinProgress.Visible = true;
 
             _stopWatch.Stop();// stop time
-            labelDone.Visible = true;
-            labelDone.Text = _stopWatch.Elapsed.Milliseconds + _secondsLabel;
+            richTextBoxInfo.Text = _vectorsSavedMessage + " " + _stopWatch.Elapsed.Milliseconds + _secondsLabel;
+            richTextBoxInfo.Visible = true;
             this.Cursor = Cursors.Default;// UNset wait cursor
         }// linkLabelGenerateGraphs_LinkClicked
 
@@ -645,12 +658,14 @@ namespace PACS_Analyzer
 
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
-            /*openFileDialogChooseFile.Filter = "CSV files|*.csv";
-            openFileDialogChooseFile.Title = "Select a Log file";*/
+            openFileDialogChooseFile.Filter = "CSV files|*.csv";
+            openFileDialogChooseFile.Title = "Select a Log file";
             DialogResult result = openFileDialogChooseFile.ShowDialog(); // Show the dialog.
 
             // DataSources for DropDown Lists
-            updateDateGap();
+            if (updateDateGap() == false)
+                return;
+
             // From
             BindingSource forComboBoxFrom = new BindingSource();
             forComboBoxFrom.DataSource = _formCoreGlobalObject.comboBoxTimes;
@@ -821,14 +836,17 @@ namespace PACS_Analyzer
             }// end of connection
 
             progressBar3.Visible = false;
-            labelWorkinProgress.Text = _vectorsSavedMessage;
-            labelWorkinProgress.Visible = true;
 
             _stopWatch.Stop();// stop time
-            labelDone.Visible = true;
-            labelDone.Text = _stopWatch.Elapsed.Milliseconds + _secondsLabel;
+            richTextBoxInfo.Text = _anomaliesSavedMessage + " " + _stopWatch.Elapsed.Milliseconds + _secondsLabel;
+            richTextBoxInfo.Visible = true;
             this.Cursor = Cursors.Default;// UNset wait cursor
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(richTextBoxInfo.Text, labelInfoText.Text);
         }
     }// end of class MainForm : Form
 }
