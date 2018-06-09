@@ -809,7 +809,8 @@ namespace PACS_Analyzer
                             foreach (DataRow line in dt.Rows)// read [AnomaliesTEMP] line by line
                             {
                                 odd_duration = (Convert.ToInt32(line["duration"]) * 60) / Convert.ToInt32(line["times"]);
-                                average_duration = (Convert.ToInt32(line["duration_AVG"]) * 60) / Convert.ToInt32(line["times"]);
+                                if (line["duration_AVG"] != DBNull.Value)
+                                    average_duration = (Convert.ToInt32(line["duration_AVG"]) * 60) / Convert.ToInt32(line["times"]);
                                 info = new UTF8Encoding(true).GetBytes(
                                     line["date"]
                                     + ";"
