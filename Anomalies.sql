@@ -144,14 +144,16 @@ WHILE @floor_loop = 0
                                                     ([date], 
                                                      user_source_id, 
                                                      user_target_id, 
-                                                     duration, 
+                                                     duration,
+													 duration_AVG,
                                                      times, 
                                                      [zone], 
                                                      [floor]) 
                                         SELECT [date], 
                                                user_source_id, 
                                                user_target_id, 
-                                               duration, 
+                                               duration,
+											   @avg_duration, 
                                                times, 
                                                [zone], 
                                                [floor] 

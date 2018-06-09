@@ -214,6 +214,8 @@ namespace PACS_Analyzer
                     readIntervalsChild.Parameters.AddWithValue("zone", lineParent["zone"]);
 
                     SqlDataAdapter daChild = new SqlDataAdapter(readIntervalsChild);
+                    // set the CommandTimeout
+                    daChild.SelectCommand.CommandTimeout = 600;  // seconds
                     DataTable dtChild = new DataTable();
                     daChild.Fill(dtChild);// Put all data to DataTable format
 
@@ -411,6 +413,8 @@ namespace PACS_Analyzer
                 {
                     try
                     {
+                        // set the CommandTimeout
+                        GraphByDateFillIn.CommandTimeout = 600;// seconds
                         GraphByDateFillIn.ExecuteNonQuery();
                     }
                     catch (Exception ex)
@@ -438,6 +442,8 @@ namespace PACS_Analyzer
                 {
                     try
                     {
+                        // set the CommandTimeout
+                        Anomalies.CommandTimeout = 600;// seconds
                         Anomalies.ExecuteNonQuery();
                     }
                     catch (Exception ex)
@@ -597,6 +603,8 @@ namespace PACS_Analyzer
                         readGraphByDate.Parameters.AddWithValue("user_source_id", user.id);// 
 
                         SqlDataAdapter da = new SqlDataAdapter(readGraphByDate);
+                        // set the CommandTimeout
+                        da.SelectCommand.CommandTimeout = 600;  // seconds
                         DataTable dt = new DataTable();
                         da.Fill(dt);// Put all data to DataTable formay
 
@@ -778,6 +786,8 @@ namespace PACS_Analyzer
                 using (SqlCommand readAnomalies = new SqlCommand("SELECT * FROM [AnomaliesTEMP];", sqlConnection))// First, read whole table [AnomaliesTEMP]
                 {
                     SqlDataAdapter da = new SqlDataAdapter(readAnomalies);
+                    // set the CommandTimeout
+                    da.SelectCommand.CommandTimeout = 600;  // seconds
                     DataTable dt = new DataTable();
                     da.Fill(dt);// Put all data to DataTable formay
 
@@ -799,7 +809,7 @@ namespace PACS_Analyzer
                             foreach (DataRow line in dt.Rows)// read [AnomaliesTEMP] line by line
                             {
                                 odd_duration = (Convert.ToInt32(line["duration"]) * 60) / Convert.ToInt32(line["times"]);
-                                //average_duration = (Convert.ToInt32(line["duration_AVG"]) * 60) / Convert.ToInt32(line["times"]);
+                                average_duration = (Convert.ToInt32(line["duration_AVG"]) * 60) / Convert.ToInt32(line["times"]);
                                 info = new UTF8Encoding(true).GetBytes(
                                     line["date"]
                                     + ";"
@@ -809,7 +819,7 @@ namespace PACS_Analyzer
                                     + ";"
                                     + odd_duration.ToString()
                                     + ";"
-                                    + "0"
+                                    + average_duration.ToString()
                                     + ";"
                                     + line["times"]
                                     + ";"

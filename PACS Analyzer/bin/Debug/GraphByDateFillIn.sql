@@ -1,6 +1,7 @@
 ﻿TRUNCATE TABLE [graphbydate] 
 
 DECLARE @minTimeDiff INT-- choose minimum time for [duration]
+DECLARE @numberOfLines INT
 
 DECLARE parent_table_cursor CURSOR -- ОБЬЯВЛЯЕМ КУРСОР  
 FOR 
